@@ -56,7 +56,7 @@ $rk    = in_array($meta['rk'] ?? '', RANKS, true) ? $meta['rk'] : RANKS[0];
 $gif   = $base . "paylasim/$id.gif";
 $title = "Enik Düşüşü 🐾 Seviye $lv: $rk";
 $desc  = 'Eniği cuk diye düşürebilir misin? Beni geçebilir misin?';
-$e = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+$e = function (string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); };   // PHP 7.2 uyumlu (fn => 7.4 ister)
 header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
