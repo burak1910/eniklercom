@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1a0d08">
+<title>Enik Düşüşü – Dikenlerden Kaç! | enikler.com</title>
+<meta name="description" content="Eniği kuyuya at, dikenlere değmeden ne kadar derine düşebilirsin? Rezalet'ten Tanrısal'a rütbeni kap, skorunu X'te paylaş!">
+<link rel="canonical" href="https://enikler.com/oyun/enik-dusus/">
+<meta property="og:site_name" content="enikler.com">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://enikler.com/oyun/enik-dusus/">
+<meta property="og:title" content="Enik Düşüşü 🐾 Ne kadar derine düşebilirsin?">
+<meta property="og:description" content="Dikenlere değmeden düş, Tanrısal rütbesine ulaş. Beni geçebilir misin?">
+<meta property="og:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Enik Düşüşü 🐾 Ne kadar derine düşebilirsin?">
+<meta name="twitter:description" content="Dikenlere değmeden düş, Tanrısal rütbesine ulaş. Beni geçebilir misin?">
+<meta name="twitter:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --accent:#FFB703; --accent-d:#F08C00; --ink:#2B2118; --like:#22B573; --nope:#F0506E; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; background:#0e0705; overflow:hidden; overscroll-behavior:none; }
+  body { font-family:'Nunito',system-ui,sans-serif; color:#fff; user-select:none; -webkit-user-select:none; touch-action:none; }
+  #wrap { position:fixed; inset:0; max-width:480px; margin:0 auto; }
+  canvas { display:block; width:100%; height:100%; }
+  .hidden { display:none !important; }
+
+  #hud { position:absolute; top:calc(env(safe-area-inset-top) + 10px); left:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-start; pointer-events:none; }
+  #hud .m { font-weight:900; font-size:2.2rem; line-height:1; text-shadow:0 3px 0 rgba(0,0,0,.4); }
+  #hud .m small { font-size:1rem; opacity:.8; }
+  #hud .best { font-weight:800; font-size:.85rem; opacity:.75; text-align:right; }
+  #home { pointer-events:auto; display:inline-block; margin-top:6px; color:var(--accent); font-weight:900; font-size:.85rem; text-decoration:none; }
+
+  #pop { position:absolute; left:0; right:0; top:28%; text-align:center; font-weight:900; font-size:2.4rem; pointer-events:none;
+         opacity:0; transform:scale(.6); transition:opacity .25s, transform .25s; text-shadow:0 4px 0 rgba(0,0,0,.45); }
+  #pop.on { opacity:1; transform:scale(1); }
+
+  #over { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(14,7,5,.55); }
+  #over.hidden { display:none; }
+  .card { width:100%; max-width:340px; background:#FFF8E7; color:var(--ink); border-radius:28px; padding:24px 20px 20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:in .3s ease-out; }
+  @keyframes in { from { transform:translateY(30px) scale(.9); opacity:0; } }
+  .card .rank { font-weight:900; font-size:2.3rem; line-height:1.1; margin:2px 0 4px; }
+  .card .dep { font-weight:900; font-size:1.2rem; }
+  .card .bst { font-weight:800; font-size:.9rem; color:#8a7a66; margin-top:2px; }
+  .card .rec { display:inline-block; margin-top:8px; background:var(--nope); color:#fff; font-weight:900; font-size:.8rem; padding:4px 12px; border-radius:99px; }
+  .btn { display:block; width:100%; margin-top:12px; border:0; border-radius:16px; padding:14px; font:900 1.1rem 'Nunito',sans-serif; cursor:pointer; text-decoration:none; }
+  .btn.go { background:var(--accent); color:#fff; box-shadow:0 5px 0 var(--accent-d); }
+  .btn.sh { background:#111; color:#fff; box-shadow:0 5px 0 #000; }
+  .btn:active { transform:translateY(3px); box-shadow:none; }
+  .card a.site { display:block; margin-top:14px; font-weight:800; font-size:.85rem; color:#8a7a66; text-decoration:none; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c" aria-label="Enik Düşüşü oyunu"></canvas>
+  <div id="hud">
+    <div><div class="m"><span id="dm">0</span><small> m</small></div><a id="home" href="/">← enikler.com</a></div>
+    <div class="best">En iyi<br><span id="bm">0</span> m</div>
+  </div>
+  <div id="pop"></div>
+  <div id="over" class="hidden">
+    <div class="card">
+      <div style="font-size:3rem">🐾</div>
+      <div class="rank" id="oRank">Rezalet</div>
+      <div class="dep"><span id="oDep">0</span> metre düştün</div>
+      <div class="bst">En iyin: <span id="oBest">0</span> m</div>
+      <div id="oRec" class="rec hidden">YENİ REKOR!</div>
+      <button class="btn go" id="again" type="button">Tekrar Dene</button>
+      <button class="btn sh" id="share" type="button">Skorunu Paylaş 𝕏</button>
+      <a class="site" href="/">Diğer enik testleri için enikler.com 🐾</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+const GAME_URL = 'https://enikler.com/oyun/enik-dusus/';
+
+/* ---------- Ayarlar ---------- */
+const W = 360;              // dünya genişliği (birim)
+const SEG = 160;            // duvar segment yüksekliği
+const ZONE = 500;           // her rütbe bandının yüksekliği (50 m)
+const LEDGE = 150;          // başlangıç platformunun sağ ucu
+const ER = 13;              // enik yarıçapı
+const SPIKE = 12;           // diken boyu
+const RANKS = [
+  ['Rezalet',    '#2a0b08', '#ff8a7a'],
+  ['Kötü',       '#3b1209', '#ff9e6b'],
+  ['İdare Eder', '#3d2a08', '#ffc94a'],
+  ['Fena Değil', '#2d3a0a', '#d6f25a'],
+  ['İyi',        '#0e3a1b', '#5cf08a'],
+  ['Harika',     '#0a3a34', '#4ff0d6'],
+  ['Süper',      '#0b2c44', '#5cc8ff'],
+  ['Muhteşem',   '#1b1c4c', '#8f9bff'],
+  ['Kusursuz',   '#301446', '#d88cff'],
+  ['Efsane',     '#44122f', '#ff6ec4'],
+  ['Tanrısal',   '#3d3410', '#ffe14d']
+];
+const rankOf = y => RANKS[Math.max(0, Math.min(RANKS.length - 1, Math.floor(y / ZONE)))];
+
+/* ---------- Durum ---------- */
+let scale = 1, viewH = 600, dpr = 1;
+let L = [], R = [];                 // segment başına sol/sağ duvar x
+let e, state, camY, maxY, shake, parts, lastZone, best = 0, t0 = 0, deadAt = 0;
+const keys = { l:false, r:false }, ptrs = new Map();
+
+try { best = +localStorage.getItem('enikDususBest') || 0; } catch (_) {}
+$('bm').textContent = best;
+
+function resize() {
+  const r = cv.getBoundingClientRect();
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  scale = cv.width / W; viewH = cv.height / scale;
+}
+addEventListener('resize', resize);
+
+/* ---------- Kuyu üretimi ---------- */
+function genTo(y) {
+  while ((L.length - 1) * SEG < y + SEG * 2) {
+    const i = L.length, d = i * SEG;
+    if (i === 0) { L.push(LEDGE); R.push(W - 12); continue; }
+    if (i === 1) { L.push(LEDGE - 10); R.push(W - 40); continue; }
+    const gap = Math.max(70, 205 - d * 0.02);
+    const prevC = (L[i - 1] + R[i - 1]) / 2;
+    const shift = 30 + Math.min(d * 0.008, 60);
+    let c = prevC + (Math.random() * 2 - 1) * shift;
+    c = Math.max(gap / 2 + 14, Math.min(W - gap / 2 - 14, c));
+    L.push(c - gap / 2); R.push(c + gap / 2);
+  }
+}
+function wallAt(arr, y) {
+  if (y <= 0) return arr[0];
+  const i = Math.floor(y / SEG), f = (y - i * SEG) / SEG;
+  genTo(y + SEG);
+  return arr[i] + (arr[i + 1] - arr[i]) * f;
+}
+
+/* ---------- Oyun akışı ---------- */
+function reset() {
+  L = []; R = []; genTo(1200);
+  e = { x:40, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
+  state = 'ready'; camY = -viewH * 0.45; maxY = 0; shake = 0; parts = []; lastZone = 0;
+  $('dm').textContent = 0; $('over').classList.add('hidden');
+}
+
+function jump() {
+  if (state !== 'ready') return;
+  state = 'air'; e.vy = -6.2; e.vx = 2.7;
+  if (t0 === 0) t0 = performance.now();
+}
+
+function die() {
+  if (state === 'dead') return;
+  state = 'dead'; deadAt = performance.now(); shake = 14;
+  try { navigator.vibrate && navigator.vibrate(70); } catch (_) {}
+  for (let k = 0; k < 22; k++) {
+    const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 4;
+    parts.push({ x:e.x, y:e.y, vx:Math.cos(a) * s, vy:Math.sin(a) * s - 1, life:1, c:k % 3 ? '#f4d9a8' : '#c98b4a' });
+  }
+  const m = Math.floor(maxY / 10), rk = rankOf(maxY), rec = m > best;
+  if (rec) { best = m; try { localStorage.setItem('enikDususBest', best); } catch (_) {} $('bm').textContent = best; }
+  if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', metre:m });
+  setTimeout(() => {
+    $('oRank').textContent = rk[0]; $('oRank').style.color = rk[1] === '#3d3410' ? '#d9a400' : shade(rk[2]);
+    $('oDep').textContent = m; $('oBest').textContent = best;
+    $('oRec').classList.toggle('hidden', !rec);
+    $('over').classList.remove('hidden');
+  }, 750);
+}
+const shade = hex => { // açık rengi kartta okunur yapmak için koyulaştır
+  const n = parseInt(hex.slice(1), 16), f = .62;
+  return 'rgb(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => Math.round(v * f)).join(',') + ')';
+};
+
+function popZone(z) {
+  const rk = RANKS[Math.min(z, RANKS.length - 1)], p = $('pop');
+  p.textContent = rk[0] + '!'; p.style.color = rk[2]; p.classList.add('on');
+  clearTimeout(popZone.t); popZone.t = setTimeout(() => p.classList.remove('on'), 900);
+}
+
+/* ---------- Güncelleme ---------- */
+function update(dt) {
+  if (state === 'ready') {
+    e.x += 1.3 * e.dir * dt; e.walk += .25 * dt;
+    if (e.x > LEDGE - 14) { e.x = LEDGE - 14; e.dir = -1; }
+    if (e.x < 20) { e.x = 20; e.dir = 1; }
+  } else if (state === 'air') {
+    const steer = (keys.r ? 1 : 0) - (keys.l ? 1 : 0) + steerTouch();
+    const depth = Math.max(0, e.y);
+    const maxVy = 5 + Math.min(depth * 0.0006, 4);
+    e.vy = Math.min(maxVy, e.vy + 0.36 * dt);
+    if (e.y > 4) { e.vx += steer * 0.62 * dt; e.vx *= Math.pow(0.9, dt); }
+    e.vx = Math.max(-6.5, Math.min(6.5, e.vx));
+    const py = e.y;
+    e.x += e.vx * dt; e.y += e.vy * dt;
+    e.rot += (e.vx * 0.06 - e.rot) * 0.2 * dt;
+    e.x = Math.max(ER, Math.min(W - ER, e.x));
+
+    // tekrar platforma kondu mu?
+    if (py <= 0 && e.y > 0 && e.x < LEDGE - 2) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; state = 'ready'; e.dir = 1; return; }
+
+    if (e.y > ER * 0.5) {
+      const lx = wallAt(L, e.y), rx = wallAt(R, e.y), pad = SPIKE * 0.55;
+      if (e.x - ER * .8 < lx + pad || e.x + ER * .8 > rx - pad) { die(); return; }
+    }
+    if (e.y > maxY) {
+      maxY = e.y; $('dm').textContent = Math.floor(maxY / 10);
+      const z = Math.floor(maxY / ZONE);
+      if (z > lastZone) { lastZone = z; popZone(z); }
+    }
+  }
+  // kamera
+  const target = state === 'ready' ? -viewH * 0.45 : e.y - viewH * 0.38;
+  camY += (target - camY) * Math.min(1, 0.12 * dt);
+  // parçacıklar
+  parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += .2 * dt; p.life -= .02 * dt; });
+  parts = parts.filter(p => p.life > 0);
+  shake *= Math.pow(0.86, dt);
+}
+
+/* ---------- Çizim ---------- */
+function draw(now) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#120806'; ctx.fillRect(0, 0, cv.width, cv.height);
+  const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
+  ctx.setTransform(scale, 0, 0, scale, sx * scale, (sy - camY) * scale);
+  const top = camY, bot = camY + viewH;
+  genTo(bot + SEG);
+
+  // gökyüzü yıldızları
+  if (top < 0) {
+    ctx.fillStyle = 'rgba(255,240,200,.35)';
+    for (let k = 0; k < 30; k++) { const x = (k * 97) % W, y = -((k * 53) % 600) - 20; if (y > top) ctx.fillRect(x, y, 2, 2); }
+  }
+
+  // rütbe bantları
+  for (let z = Math.max(0, Math.floor(top / ZONE)); z * ZONE < bot; z++) {
+    const rk = RANKS[Math.min(z, RANKS.length - 1)];
+    ctx.fillStyle = rk[1]; ctx.fillRect(0, z * ZONE, W, ZONE);
+    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, z * ZONE, W, 3);
+    const ly = z * ZONE + ZONE * 0.5, cx = (wallAt(L, ly) + wallAt(R, ly)) / 2;
+    ctx.font = '900 30px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = rk[2]; ctx.globalAlpha = .55;
+    ctx.fillText(z >= RANKS.length ? rk[0] + ' ×' + (z - RANKS.length + 2) : rk[0], cx, ly);
+    ctx.globalAlpha = 1;
+  }
+
+  // kaya duvarları
+  const i0 = Math.max(0, Math.floor(top / SEG)), i1 = Math.ceil(bot / SEG) + 1;
+  ctx.fillStyle = 'rgba(20,8,5,.82)';
+  ctx.beginPath(); ctx.moveTo(0, i0 * SEG);
+  for (let i = i0; i <= i1; i++) ctx.lineTo(L[i], i * SEG);
+  ctx.lineTo(0, i1 * SEG); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(W, i0 * SEG);
+  for (let i = i0; i <= i1; i++) ctx.lineTo(R[i], i * SEG);
+  ctx.lineTo(W, i1 * SEG); ctx.fill();
+
+  // duvar kenarları + dikenler
+  for (const [arr, side] of [[L, 1], [R, -1]]) {
+    ctx.strokeStyle = '#c98b4a'; ctx.lineWidth = 3;
+    ctx.beginPath(); for (let i = i0; i <= i1; i++) (i === i0 ? ctx.moveTo : ctx.lineTo).call(ctx, arr[i], i * SEG); ctx.stroke();
+    ctx.fillStyle = '#9b6bff'; ctx.strokeStyle = '#e9ddff'; ctx.lineWidth = 1.2;
+    for (let i = i0; i < i1; i++) {
+      const x0 = arr[i], y0 = i * SEG, x1 = arr[i + 1], y1 = (i + 1) * SEG;
+      const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
+      const nx = uy * side, ny = -ux * side; // içe bakan normal
+      const n = Math.floor(len / 14);
+      for (let k = 0; k < n; k++) {
+        const a = k / n, b = (k + 1) / n, m = (a + b) / 2;
+        const ax = x0 + (x1 - x0) * a, ay = y0 + (y1 - y0) * a, bx = x0 + (x1 - x0) * b, by = y0 + (y1 - y0) * b;
+        const mx = x0 + (x1 - x0) * m + nx * SPIKE, my = y0 + (y1 - y0) * m + ny * SPIKE;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(mx, my); ctx.lineTo(bx, by); ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+    }
+  }
+
+  // başlangıç platformu
+  ctx.fillStyle = '#FFF4D6'; ctx.fillRect(0, -1, LEDGE, 7);
+  ctx.fillStyle = 'rgba(20,8,5,.82)'; ctx.fillRect(0, 6, LEDGE - 2, 4);
+
+  // enik
+  if (state !== 'dead') drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : (e.vx >= 0 ? 1 : -1), e.rot, now);
+
+  // parçacıklar
+  parts.forEach(p => { ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, 7); ctx.fill(); });
+  ctx.globalAlpha = 1;
+
+  // ipucu
+  if (state === 'ready') {
+    ctx.font = '900 20px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#FFB703';
+    const bob = Math.sin(now / 250) * 3;
+    ctx.fillText('Kenara gelince dokun!', W / 2, -150 + bob);
+    ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = 'rgba(255,244,214,.8)';
+    ctx.fillText('Düşerken ekranın sağına / soluna bas', W / 2, -122 + bob);
+  }
+}
+
+function drawEnik(x, y, dir, rot, now) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(dir, 1);
+  const fall = state === 'air', leg = state === 'ready' ? Math.sin(e.walk) * 3 : 0;
+  // kuyruk
+  ctx.strokeStyle = '#d9a066'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-11, 2); ctx.quadraticCurveTo(-20, -6 + Math.sin(now / 90) * 4, -17, -13); ctx.stroke();
+  // bacaklar
+  ctx.strokeStyle = '#e8b97f'; ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.moveTo(-6, 7); ctx.lineTo(-6 + leg, fall ? 11 : 13);
+  ctx.moveTo(6, 7); ctx.lineTo(6 - leg, fall ? 11 : 13); ctx.stroke();
+  // gövde
+  ctx.fillStyle = '#f4d9a8'; ctx.beginPath(); ctx.ellipse(-1, 3, 12, 9, 0, 0, 7); ctx.fill();
+  // kafa
+  ctx.beginPath(); ctx.arc(7, -6, 10, 0, 7); ctx.fill();
+  // kulaklar
+  ctx.fillStyle = '#c98b4a';
+  ctx.beginPath(); ctx.ellipse(0, -9, 4, 8, fall ? -1.2 : 0.35, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(13, -11, 3.5, 7, fall ? 1.1 : -0.25, 0, 7); ctx.fill();
+  // göz + burun
+  ctx.fillStyle = '#2B2118';
+  if (fall) { ctx.beginPath(); ctx.arc(10, -8, 2.6, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(10.8, -8.8, .9, 0, 7); ctx.fill(); }
+  else { ctx.beginPath(); ctx.arc(10, -8, 1.9, 0, 7); ctx.fill(); }
+  ctx.fillStyle = '#2B2118'; ctx.beginPath(); ctx.arc(16.5, -4.5, 2.2, 0, 7); ctx.fill();
+  // ağız (düşerken "o")
+  if (fall) { ctx.beginPath(); ctx.arc(13, -0.5, 1.8, 0, 7); ctx.fill(); }
+  // yanak
+  ctx.fillStyle = 'rgba(240,80,110,.35)'; ctx.beginPath(); ctx.arc(7, -2, 2.5, 0, 7); ctx.fill();
+  ctx.restore();
+}
+
+/* ---------- Kontroller ---------- */
+function steerTouch() {
+  let s = 0; const r = cv.getBoundingClientRect();
+  ptrs.forEach(px => { s += px - r.left < r.width / 2 ? -1 : 1; });
+  return Math.max(-1, Math.min(1, s));
+}
+cv.addEventListener('pointerdown', ev => {
+  ev.preventDefault(); ptrs.set(ev.pointerId, ev.clientX);
+  if (state === 'ready') jump();
+});
+cv.addEventListener('pointermove', ev => { if (ptrs.has(ev.pointerId)) ptrs.set(ev.pointerId, ev.clientX); });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(n => cv.addEventListener(n, ev => ptrs.delete(ev.pointerId)));
+
+addEventListener('keydown', ev => {
+  const k = ev.key;
+  if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = true;
+  else if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = true;
+  else if (k === ' ' || k === 'Enter' || k === 'ArrowDown') {
+    ev.preventDefault();
+    if (state === 'ready') jump();
+    else if (state === 'dead' && performance.now() - deadAt > 800) reset();
+  }
+});
+addEventListener('keyup', ev => {
+  const k = ev.key;
+  if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = false;
+  if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = false;
+});
+
+$('again').onclick = () => { ptrs.clear(); reset(); };
+$('share').onclick = async () => {
+  const m = Math.floor(maxY / 10), rk = rankOf(maxY)[0];
+  const text = `Enik Düşüşü'nde ${m} metre düştüm, rütbem: ${rk} 🐾 Beni geçebilir misin?`;
+  if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', metre:m });
+  if (navigator.share) { try { await navigator.share({ text, url:GAME_URL }); return; } catch (_) { return; } }
+  window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(GAME_URL), '_blank', 'noopener');
+};
+
+/* ---------- Döngü ---------- */
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(2.5, (now - last) / 16.667); last = now;
+  update(dt); draw(now);
+  requestAnimationFrame(loop);
+}
+resize(); reset(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
