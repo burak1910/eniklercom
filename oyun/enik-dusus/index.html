@@ -83,6 +83,8 @@ const GAME_URL = 'https://enikler.com/oyun/enik-dusus/';
 /* ---------- Ayarlar ---------- */
 const W = 360;          // dünya genişliği (birim)
 const D = 1600;         // kuyunun derinliği
+const SLAB = 18;        // kuyunun dibindeki kaya tavanın kalınlığı
+const ROAD = D + 170;   // eniğin düştüğü yolun yüksekliği
 const LEDGE = 100;      // platformun sağ ucu = sol duvarın üstü
 const TOP_R = 300;   // sağ duvarın üstü
 const ER = 13;          // enik yarıçapı
@@ -185,7 +187,7 @@ const shade = hex => {
 
 function win() {
   state = 'win'; winAt = performance.now();
-  e.y = D - ER; e.vy = 0; e.vx = 0; e.rot = 0;
+  e.y = ROAD; e.vy = 0; e.vx = 0; e.rot = 0;
   pop('Tanrısal! 🎉', RANKS[RANKS.length - 1][2]);
   burst(e.x, e.y, 30, ['#ffe14d', '#ff6ec4', '#5cc8ff', '#5cf08a']);
   try { navigator.vibrate && navigator.vibrate([30, 40, 30]); } catch (_) {}
@@ -208,17 +210,15 @@ function step() {
     e.rot += (e.vx * 0.05 - e.rot) * 0.2;
     // erken dokunduysa tekrar platforma kondu
     if (py <= 0 && e.y > 0 && e.x < LEDGE) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; e.dir = 1; state = 'ready'; return; }
-    if (e.y > 0) {
-      if (e.x - HIT < lx(e.y) || e.x + HIT > rx(e.y)) { die(); return; }
-      if (e.y >= D - ER) { win(); return; }
-    }
+    if (e.y > 0 && e.y < D + SLAB && (e.x - HIT < lx(e.y) || e.x + HIT > rx(e.y))) { die(); return; }
+    if (e.y >= ROAD) { win(); return; }
   } else if (state === 'win') {
     if (performance.now() - winAt > 1400) startLevel(lvl + 1);
   }
   parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .2; p.life -= .02; });
   parts = parts.filter(p => p.life > 0);
   shake *= 0.86;
-  const target = state === 'ready' ? -viewH * 0.45 : Math.min(e.y - viewH * 0.4, D + 60 - viewH * 0.8);
+  const target = state === 'ready' ? -viewH * 0.45 : Math.min(e.y - viewH * 0.4, ROAD + 130 - viewH);
   camY += (target - camY) * (state === 'ready' ? 0.08 : 0.15);
 }
 
@@ -284,17 +284,13 @@ function draw(now) {
     const ly = y0 + BAND / 2;
     wordArt(RANKS[z][0], (lx(ly) + rx(ly)) / 2, ly, Math.min(28, (rx(ly) - lx(ly)) / 4), (jit(z) - .5) * .5);
   }
-  // dip: Tanrısal minderi
-  const gr = RANKS[RANKS.length - 1];
-  ctx.fillStyle = gr[1]; ctx.fillRect(0, D, W, 400);
-  ctx.fillStyle = '#ff4fa3'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
-  ctx.fillRect(cfg.lb, D - 4, cfg.bw, 14); ctx.strokeRect(cfg.lb, D - 4, cfg.bw, 14);
-  wordArt('Tanrısal', cfg.cx, D + 46, 26, -.12);
+  // dip: delikten sokağa düşüş
+  drawStreet(now);
 
   // duvarlar: düz kahverengi + kalın siyah kontur
   ctx.fillStyle = '#9b5a2b'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + 400); ctx.lineTo(0, D + 400); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + 400); ctx.lineTo(W, D + 400); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + SLAB); ctx.lineTo(0, D + SLAB); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + SLAB); ctx.lineTo(W, D + SLAB); ctx.closePath(); ctx.fill(); ctx.stroke();
   // duvara Paint "kaya" lekeleri
   ctx.fillStyle = '#7a4520';
   for (let k = 0; k < 40; k++) {
@@ -352,6 +348,47 @@ function draw(now) {
   ctx.restore();
 }
 
+// kuyunun altı: Paint çizimi bir sokak
+function drawStreet(now) {
+  const y0 = D + SLAB, yr = ROAD;
+  ctx.fillStyle = '#ffc266'; ctx.fillRect(0, D, W, yr - D);              // gün batımı gökyüzü (yer altında, neden olmasın)
+  // binalar
+  const cols = ['#e05a5a', '#5a8ae0', '#e0c35a', '#7ac46a', '#b57ae0', '#e08a3c', '#4fc4c4'];
+  for (let k = 0; k < 7; k++) {
+    const bw = 44 + jit(k + 31) * 16, bx = k * 54 - 8 + jit(k + 40) * 8, bh = 58 + jit(k + 20) * 70;
+    ctx.fillStyle = cols[k]; ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+    ctx.fillRect(bx, yr - bh, bw, bh); ctx.strokeRect(bx, yr - bh, bw, bh);
+    ctx.fillStyle = '#fff6a0';
+    for (let wy = yr - bh + 8; wy < yr - 18; wy += 18) for (let wx = bx + 6; wx < bx + bw - 10; wx += 14)
+      if (jit(wx * 7 + wy) > .3) { ctx.fillRect(wx, wy, 8, 9); ctx.strokeRect(wx, wy, 8, 9); }
+  }
+  // sokak tabelası
+  const px = 22;
+  ctx.fillStyle = '#888'; ctx.fillRect(px, yr - 95, 5, 95); ctx.strokeRect(px, yr - 95, 5, 95);
+  ctx.save(); ctx.translate(px + 2, yr - 100); ctx.rotate(-.08);
+  ctx.fillStyle = '#1d4fd8'; ctx.fillRect(-4, -16, 92, 26); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-1, -13, 86, 20);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('Tanrısal Cd.', 4, -3); ctx.restore();
+  // asfalt yol
+  ctx.fillStyle = '#4a4a4a'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+  ctx.fillRect(-3, yr, W + 6, 84); ctx.strokeRect(-3, yr, W + 6, 84);
+  ctx.fillStyle = '#fff';
+  for (let x = -10; x < W; x += 44) ctx.fillRect(x + 6, yr + 40, 26, 5);
+  // geçen ucuz araba (alt şeritte)
+  const cx = ((now / 9) % (W + 260)) - 130;
+  ctx.fillStyle = '#ff2020'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+  ctx.fillRect(cx, yr + 54, 74, 18); ctx.strokeRect(cx, yr + 54, 74, 18);
+  ctx.fillRect(cx + 14, yr + 42, 40, 13); ctx.strokeRect(cx + 14, yr + 42, 40, 13);
+  ctx.fillStyle = '#bfe8ff'; ctx.fillRect(cx + 18, yr + 45, 14, 8); ctx.fillRect(cx + 36, yr + 45, 14, 8);
+  ctx.fillStyle = '#111'; [cx + 15, cx + 58].forEach(wx => { ctx.beginPath(); ctx.arc(wx, yr + 73, 7, 0, 7); ctx.fill(); });
+  // sarı-siyah kaldırım + kaldırım taşları
+  for (let x = 0; x < W; x += 24) { ctx.fillStyle = (x / 24) % 2 ? '#111' : '#ffd400'; ctx.fillRect(x, yr + 84, 24, 12); }
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(-3, yr + 84, W + 6, 12);
+  ctx.fillStyle = '#b5b5b5'; ctx.fillRect(0, yr + 96, W, 400);
+  ctx.strokeStyle = '#8a8a8a'; ctx.lineWidth = 1.5;
+  for (let y = yr + 96; y < yr + 400; y += 20) for (let x = (y / 20 % 2) * 15; x < W; x += 30) ctx.strokeRect(x, y, 30, 20);
+}
+
 // fotoğrafı kare kare, arka planıyla, kaskatı çiz
 function photoBox(x, y, rot, flip) {
   const h = 54, w = photoOk ? Math.min(54, h * photo.width / photo.height) : 40;
@@ -370,7 +407,8 @@ function drawEnik(x, y, dir, rot, now) {
   } else if (state === 'air') {
     photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1);  // düşerken yavaşça döner
   } else {
-    photoBox(x, y - 8, 0, 1);
+    const t = Math.min(1, (now - winAt) / 250);          // yere çakılınca yamyassı olup geri gelsin
+    ctx.save(); ctx.translate(x, y); ctx.scale(1 + .35 * (1 - t), 1 - .35 * (1 - t)); photoBox(0, -27, 0, 1); ctx.restore();
   }
 }
 
