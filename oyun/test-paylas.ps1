@@ -12,8 +12,13 @@ function Check($name, $ok, $detail = '') {
   else { Write-Host "[HATA]  $name $detail" -ForegroundColor Red; $script:fail++ }
 }
 
-# 1x1 geçerli GIF
-$gif = [Convert]::FromBase64String('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
+# 40x40 geçerli GIF (sunucu 100 bayttan küçük dosyaları reddeder, 1x1 GIF çok küçük kalır)
+Add-Type -AssemblyName System.Drawing
+$bmp = New-Object System.Drawing.Bitmap 40, 40
+$g = [System.Drawing.Graphics]::FromImage($bmp); $g.Clear([System.Drawing.Color]::Orange); $g.Dispose()
+$ms = New-Object System.IO.MemoryStream
+$bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Gif); $bmp.Dispose()
+$gif = $ms.ToArray()
 
 function Send-Upload($bytes, $fileName, $lv, $rk) {
   $c = New-Object System.Net.Http.HttpClient
@@ -60,13 +65,11 @@ $huge = Send-Upload $big 'big.gif' 1 'Rezalet'
 Check 'Büyük dosya reddedilir (400)' ($huge.Status -eq 400) "(durum $($huge.Status))"
 
 # 4) yanlış id ana sayfaya yönlendirir, hata sayfası vermez
-try {
-  $r = Invoke-WebRequest ($Base + 'paylas.php?id=000000000000') -UseBasicParsing -MaximumRedirection 0 -ErrorAction Stop
-  Check 'Olmayan id yönlendirilir' ($r.StatusCode -in 301, 302, 404) "(durum $($r.StatusCode))"
-} catch {
-  $code = [int]$_.Exception.Response.StatusCode
-  Check 'Olmayan id yönlendirilir' ($code -in 301, 302, 404) "(durum $code)"
-}
+$req = [Net.HttpWebRequest]::Create($Base + 'paylas.php?id=000000000000')
+$req.AllowAutoRedirect = $false
+$resp = $req.GetResponse()
+Check 'Olmayan id yönlendirilir' ([int]$resp.StatusCode -in 301, 302) "(durum $([int]$resp.StatusCode))"
+$resp.Close()
 
 if ($fail) { Write-Host "`n$fail kontrol başarısız." -ForegroundColor Red; exit 1 }
 Write-Host "`nHepsi geçti." -ForegroundColor Green
