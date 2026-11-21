@@ -31,6 +31,7 @@
   #hud .m { font-weight:700; font-size:2.2rem; line-height:1; color:#ffee00; text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000; }
   #hud .m small { font-size:1rem; opacity:.8; }
   #hud .best { font-weight:700; font-size:.9rem; text-align:right; text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000; }
+  #snd { pointer-events:auto; background:none; border:0; font-size:1.3rem; line-height:1; padding:0; margin-top:4px; cursor:pointer; filter:drop-shadow(1px 1px 0 #000); }
   #home { pointer-events:auto; display:inline-block; margin-top:6px; color:#fff; font-weight:700; font-size:.85rem; text-decoration:underline; text-shadow:1px 1px 0 #000; }
 
   #pop { position:absolute; left:0; right:0; top:28%; text-align:center; font:2.8rem Impact,'Arial Black',sans-serif; -webkit-text-stroke:2px #000; transform:rotate(-6deg); pointer-events:none;
@@ -60,7 +61,7 @@
   <canvas id="c" aria-label="Enik Düşüşü oyunu"></canvas>
   <div id="hud">
     <div><div class="m"><small>Seviye </small><span id="lv">1</span></div><a id="home" href="/">← enikler.com</a></div>
-    <div class="best">En iyi<br><span id="bm">–</span></div>
+    <div class="best">En iyi<br><span id="bm">–</span><br><button id="snd" type="button" aria-label="Ses aç/kapat">🔊</button></div>
   </div>
   <div id="pop"></div>
   <div id="over" class="hidden">
@@ -110,6 +111,7 @@ const RANKS = [
   ['Efsane',     '#ff3cb4', '#ff6ec4'],
   ['Tanrısal',   '#ffd700', '#ffe14d']
 ];
+const ROCK_P = D + 240;  // kaya yağmurunun döngü uzunluğu
 const BAND = D / (RANKS.length - 1); // ilk 10 rütbe kuyu boyunca, Tanrısal = dibe ulaşmak
 
 /* Seviye atladıkça eklenen engeller */
@@ -117,13 +119,18 @@ const MODS = {
   hiz:    'Turbo Enik ⚡',
   sarhos: 'Sarhoş Enik 🥴',
   ruzgar: 'Rüzgar Var 🌬️',
-  kayan:  'Kayan Delik 🕳️'
+  kayan:  'Kayan Delik 🕳️',
+  bora:   'Çılgın Rüzgar 🌪️',
+  nefes:  'Nefes Alan Delik 🫁',
+  kaya:   'Kaya Yağmuru ☄️'
 };
-const MOD_PLAN = [[], ['hiz'], ['sarhos'], ['ruzgar'], ['kayan'], ['sarhos', 'ruzgar'], ['ruzgar', 'kayan'], ['sarhos', 'kayan'], ['hiz', 'kayan']];
+const MOD_PLAN = [[], ['hiz'], ['sarhos'], ['ruzgar'], ['kayan'], ['sarhos', 'ruzgar'], ['ruzgar', 'kayan'], ['sarhos', 'kayan'], ['hiz', 'kayan'],
+                  ['bora'], ['nefes'], ['kaya'], ['kaya', 'ruzgar'], ['nefes', 'bora'], ['kaya', 'kayan'], ['kaya', 'sarhos'], ['nefes', 'kaya']];
 
 /* ---------- Durum ---------- */
 let scale = 1, viewH = 600, dpr = 1, tick = 0;
 let lvl, cfg, e, state, camY, shake, parts, deadAt = 0, deadRank = 0, best = null, winAt = 0, rag = null;
+let trail = [], minClear = 1e9;   // düşerken arkada kalan hayaletler / duvara en yakın geçiş
 
 try { best = JSON.parse(localStorage.getItem('enikDususBest3')); } catch (_) {}
 const scoreOf = (l, r) => (l - 1) * RANKS.length + r;
@@ -142,23 +149,32 @@ addEventListener('resize', resize);
 function modsFor(l) {
   if (l <= MOD_PLAN.length) return MOD_PLAN[l - 1];
   const all = Object.keys(MODS).sort(() => Math.random() - .5);
-  return all.slice(0, l >= 14 ? 3 : 2);
+  return all.slice(0, 2);
 }
 function makeLevel(l) {
   const mods = modsFor(l), has = m => mods.includes(m);
-  const bw = Math.max(36, 50 - 1.2 * (l - 1));                          // dipteki deliğin genişliği
+  const bw = Math.max(44, 50 - 0.5 * (l - 1));                          // dipteki deliğin genişliği
   const speed = Math.min(2.6, 1.4 + 0.1 * (l - 1)) * (has('hiz') ? 1.4 : 1); // yürüme hızı
   const wind = has('ruzgar') ? (Math.random() < .5 ? -1 : 1) * (0.16 + Math.random() * 0.08) : 0;
   // deliği, rüzgarla birlikte hâlâ ulaşılabilir olacak bir yere koy
   const lo = Math.max(240, 200 + wind * 140), hi = Math.min(280, 280 + wind * 140);
   const cx = l === 1 ? 262 : lo + Math.random() * Math.max(0, hi - lo);
+  const rocks = has('kaya') ? [0, 1, 2].map(i => ({ f:.2 + Math.random() * .6, off:i * ROCK_P / 3 + Math.random() * 120, sp:2.4 + Math.random() * .8, r:12 })) : [];
   return { l, mods, bw, speed, wind, amp:has('kayan') ? 16 : 0, phase:Math.random() * 6.28,
+           bora:has('bora'), pulse:has('nefes') ? 16 : 0, bwNow:bw, rocks, windPos:0,
            sarhos:has('sarhos'), cx0:cx, cx, lb:cx - bw / 2, rb:cx + bw / 2 };
 }
 function moveHole() {
-  if (!cfg.amp) return;
-  cfg.cx = cfg.cx0 + cfg.amp * Math.sin(tick * 0.045 + cfg.phase);
-  cfg.lb = cfg.cx - cfg.bw / 2; cfg.rb = cfg.cx + cfg.bw / 2;
+  if (!cfg.amp && !cfg.pulse) return;
+  if (cfg.amp) cfg.cx = cfg.cx0 + cfg.amp * Math.sin(tick * 0.045 + cfg.phase);
+  // nefes alan delik: genişlik bw ile bw+16 arasında gidip gelir, hiçbir an bw'den dar olmaz
+  if (cfg.pulse) cfg.bwNow = cfg.bw + cfg.pulse * (0.5 + 0.5 * Math.sin(tick * 0.05 + cfg.phase * 2));
+  cfg.lb = cfg.cx - cfg.bwNow / 2; cfg.rb = cfg.cx + cfg.bwNow / 2;
+}
+const windNow = () => cfg.bora ? 0.22 * Math.sin(tick * 0.055 + cfg.phase) : cfg.wind;   // çılgın rüzgar yön değiştirir
+function rockPos(k) {                                                                      // kaya: kuyunun içinde sabit hızla düşer
+  const y = ((tick * k.sp + k.off) % ROCK_P) - 100;
+  return { x:lx(y) + k.f * (rx(y) - lx(y)), y };
 }
 const lx = y => LEDGE + (cfg.lb - LEDGE) * Math.min(1, Math.max(0, y) / D);
 const rx = y => TOP_R + (cfg.rb - TOP_R) * Math.min(1, Math.max(0, y) / D);
@@ -167,14 +183,14 @@ const walkSpeed = () => cfg.speed * (cfg.sarhos ? 0.35 + 1.3 * (0.5 + 0.5 * Math
 function startLevel(l) {
   nextPhoto(); rag = null;
   lvl = l; cfg = makeLevel(l);
-  e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
-  state = 'ready'; parts = [];
+  e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0, sq:0 };
+  state = 'ready'; parts = []; trail = [];
   $('lv').textContent = lvl;
   recReset();
   if (cfg.mods.length) pop(cfg.mods.map(m => MODS[m]).join(' + '), '#fff');
 }
 function newGame() {
-  startLevel(1); camY = -viewH * 0.45; shake = 0;
+  startLevel(parseInt(new URLSearchParams(location.search).get('sv')) || 1); camY = -viewH * 0.45; shake = 0;
   $('over').classList.add('hidden');
   gifReset();
 }
@@ -182,6 +198,9 @@ function newGame() {
 function jump() {
   if (state !== 'ready') return;
   state = 'air'; e.vy = JUMP_VY; e.vx = JUMP_VX;
+  e.sq = 8; trail = []; minClear = 1e9; shake = Math.max(shake, 5);   // fırlama hissi: uzama, sarsıntı, toz
+  burst(e.x, 2, 8, ['#ffffff', '#e8d9a8']);
+  sfx.jump();
   recStart();
 }
 
@@ -202,6 +221,7 @@ function die() {
   deadRank = Math.max(0, Math.min(RANKS.length - 2, Math.floor(e.y / BAND)));
   try { navigator.vibrate && navigator.vibrate(70); } catch (_) {}
   burst(e.x, e.y, 10, ['#ff0000', '#ffee00', '#ffffff']);
+  sfx.die();
   rag = { x:e.x, y:e.y - 8, vx:(e.x < (lx(e.y) + rx(e.y)) / 2 ? 1 : -1) * (2 + Math.random() * 2), vy:-9, spin:(Math.random() - .5) * .6, t:performance.now(), meme:MEMES[Math.floor(Math.random() * MEMES.length)] };
   recEnd();
   const sc = scoreOf(lvl, deadRank), rec = !best || sc > scoreOf(best.l, best.r);
@@ -215,6 +235,7 @@ function die() {
     $('oRec').classList.toggle('hidden', !rec);
     $('over').classList.remove('hidden');
   }, 750);
+  prepGif();
 }
 const shade = hex => {
   const n = parseInt(hex.slice(1), 16), f = .62;
@@ -224,8 +245,11 @@ const shade = hex => {
 function win() {
   state = 'win'; winAt = performance.now();
   e.y = ROAD; e.vy = 0; e.vx = 0; e.rot = 0;
-  pop('Tanrısal! 🎉', RANKS[RANKS.length - 1][2]);
-  burst(e.x, e.y, 30, ['#ffe14d', '#ff6ec4', '#5cc8ff', '#5cf08a']);
+  const near = minClear < 3;                                  // duvara kıl payı değmeden geçti mi?
+  pop(near ? 'KIL PAYI! 😱' : 'Tanrısal! 🎉', RANKS[RANKS.length - 1][2]);
+  burst(e.x, e.y, near ? 45 : 30, ['#ffe14d', '#ff6ec4', '#5cc8ff', '#5cf08a']);
+  if (near) shake = 10;
+  sfx.win(near);
   try { navigator.vibrate && navigator.vibrate([30, 40, 30]); } catch (_) {}
   recEnd();
   const r = RANKS.length - 1;
@@ -236,20 +260,25 @@ function win() {
 /* ---------- Fizik (sabit adım) ---------- */
 function step() {
   tick++; moveHole();
+  const wnd = windNow(); cfg.windPos += wnd;
   if (state === 'ready') {
     e.x += walkSpeed() * e.dir; e.walk += .25;
     if (e.x > LEDGE - 14) { e.x = LEDGE - 14; e.dir = -1; }
     if (e.x < 20) { e.x = 20; e.dir = 1; }
   } else if (state === 'air') {
     const py = e.y;
+    if (e.sq > 0) e.sq--;
+    if (tick % 2 === 0) { trail.push({ x:e.x, y:e.y - 8, rot:e.rot }); if (trail.length > 7) trail.shift(); }
     e.vy = Math.min(12, e.vy + 0.4);
     e.vx *= DRAG;
     e.x += e.vx; e.y += e.vy;
-    if (e.y > 0 && e.y < D + SLAB) e.x += cfg.wind;
+    if (e.y > 0 && e.y < D + SLAB) e.x += wnd;
     e.rot += (e.vx * 0.05 - e.rot) * 0.2;
     // erken dokunduysa tekrar platforma kondu
     if (py <= 0 && e.y > 0 && e.x < LEDGE) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; e.dir = 1; state = 'ready'; recReset(); return; }
     if (e.y > 0 && e.y < D + SLAB && (e.x - HIT < lx(e.y) || e.x + HIT > rx(e.y))) { die(); return; }
+    if (e.y > D * 0.5 && e.y < D + SLAB) minClear = Math.min(minClear, e.x - HIT - lx(e.y), rx(e.y) - e.x - HIT);
+    for (const k of cfg.rocks) { const p = rockPos(k); if (Math.hypot(e.x - p.x, e.y - 8 - p.y) < ER * .8 + k.r) { die(); return; } }
     if (e.y >= ROAD) { win(); return; }
   } else if (state === 'win') {
     if (performance.now() - winAt > 1400) startLevel(lvl + 1);
@@ -306,7 +335,23 @@ async function makeGif() {
   gif.finish();
   return new Blob([gif.bytes()], { type:'image/gif' });
 }
-function gifReset() { const b = $('gif'); b.disabled = false; b.textContent = 'GIF Olarak Paylaş 🎞️'; $('gifPrev').classList.add('hidden'); gifBlob = null; }
+// ölünce GIF'i arka planda hazırla; paylaşırken beklemek gerekmesin
+let prepId = 0, shareUrl = null;
+async function prepGif() {
+  const id = ++prepId; shareUrl = null;
+  await new Promise(r => setTimeout(r, 1500));          // kuyruk kareleri bitsin
+  if (id !== prepId || gifBlob) return;
+  try { const b = await makeGif(); if (id === prepId && b) gifBlob = b; } catch (_) {}
+}
+// GIF'i sunucuya yükle, önizlemesi GIF olan paylaşım bağlantısını al
+async function uploadGif(blob) {
+  const fd = new FormData();
+  fd.append('gif', blob, 'enik.gif'); fd.append('lv', lvl); fd.append('rk', RANKS[deadRank][0]);
+  const r = await fetch('paylas.php', { method:'POST', body:fd });
+  if (!r.ok) throw new Error('upload ' + r.status);
+  return (await r.json()).url;
+}
+function gifReset() { prepId++; shareUrl = null; const b = $('gif'); b.disabled = false; b.textContent = 'GIF Olarak Paylaş 🎞️'; $('gifPrev').classList.add('hidden'); gifBlob = null; }
 
 /* ---------- Enik fotoğrafları (arka planı silinmemiş, aynen öyle) ---------- */
 const FONT = "'Comic Sans MS','Comic Neue','Chalkboard SE',cursive";
@@ -374,12 +419,12 @@ function draw(now) {
   drawStreet(now);
 
   // rüzgar çizgileri
-  if (cfg.wind) {
+  if (cfg.wind || cfg.bora) {
     ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
     for (let k = 0; k < 26; k++) {
       const y = (k * 61) % D + 30; if (y < top - 10 || y > bot + 10) continue;
-      const span = rx(y) - lx(y), off = ((tick * cfg.wind * 14 + k * 37) % span + span) % span, x = lx(y) + off;
-      const d = Math.sign(cfg.wind);
+      const span = rx(y) - lx(y), off = ((cfg.windPos * 14 + k * 37) % span + span) % span, x = lx(y) + off;
+      const d = Math.sign(windNow()) || 1;
       ctx.beginPath(); ctx.moveTo(x - 14 * d, y); ctx.lineTo(x + 14 * d, y); ctx.lineTo(x + 8 * d, y - 5); ctx.stroke();
     }
   }
@@ -411,11 +456,27 @@ function draw(now) {
     }
   }
 
+  // kaya yağmuru: kızgın suratlı kayalar
+  for (const k of cfg.rocks) {
+    const p = rockPos(k); if (p.y < top - 20 || p.y > bot + 20) continue;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.y * .03);
+    ctx.fillStyle = '#777'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(0, 0, k.r + 3, 0, 7); ctx.fill(); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = '#fff'; ctx.fillRect(p.x - 7, p.y - 5, 6, 6); ctx.fillRect(p.x + 1, p.y - 5, 6, 6);
+    ctx.fillStyle = '#000'; ctx.fillRect(p.x - 5, p.y - 3, 2, 3); ctx.fillRect(p.x + 3, p.y - 3, 2, 3);
+    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(p.x - 9, p.y - 9); ctx.lineTo(p.x - 1, p.y - 5); ctx.moveTo(p.x + 9, p.y - 9); ctx.lineTo(p.x + 1, p.y - 5); ctx.stroke();
+  }
+
   // platform: yeşil Paint çimeni
   ctx.fillStyle = '#3ad13a'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
   ctx.fillRect(0, -2, LEDGE, 9); ctx.strokeRect(-3, -2, LEDGE + 3, 9);
   ctx.fillRect(TOP_R, -2, W - TOP_R, 9); ctx.strokeRect(TOP_R, -2, W - TOP_R + 3, 9);
 
+  // düşerken arkada solan hayaletler
+  if (state === 'air') {
+    trail.forEach((t, i) => { ctx.globalAlpha = (i + 1) / trail.length * .28; photoBox(t.x, t.y, t.rot + Math.max(0, t.y) * .004, 1); });
+    ctx.globalAlpha = 1;
+  }
   // enik fotoğrafı
   if (state === 'dead') drawRagdoll(now);
   else drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : 1, e.rot, now);
@@ -437,8 +498,16 @@ function draw(now) {
     ctx.strokeText(t2, W / 2, -124 + bob); ctx.fillText(t2, W / 2, -124 + bob);
   }
 
-  // stok fotoğraf filigranı
+  // hız çizgileri: hızlı düşerken ekranın kenarlarında
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (state === 'air' && e.vy > 7) {
+    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2 * scale; ctx.lineCap = 'round';
+    for (let k = 0; k < 12; k++) {
+      const x = (k % 2 ? .02 + Math.random() * .12 : .86 + Math.random() * .12) * cv.width, y = Math.random() * cv.height, l = (40 + Math.random() * 50) * scale;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - l); ctx.stroke();
+    }
+  }
+  // stok fotoğraf filigranı
   ctx.save(); ctx.translate(cv.width / 2, cv.height * .62); ctx.rotate(-.5);
   ctx.font = 'bold ' + Math.round(34 * scale) + 'px ' + FONT; ctx.textAlign = 'center';
   ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fillText('enikler.com', 0, 0); ctx.fillText('ÖNİZLEME', 0, 46 * scale);
@@ -487,9 +556,9 @@ function drawStreet(now) {
 }
 
 // fotoğrafı kare kare, arka planıyla, kaskatı çiz
-function photoBox(x, y, rot, flip) {
+function photoBox(x, y, rot, flip, k = 1) {   // k > 1: dikey uzar (fırlarken/düşerken), k < 1: yassılır
   const h = 54, w = photoOk ? Math.min(54, h * photo.width / photo.height) : 40;
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(flip, 1);
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(flip, 1); ctx.scale(1 / k, k);
   ctx.fillStyle = '#fff'; ctx.fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4); // yamuk beyaz çerçeve
   if (photoOk) ctx.drawImage(photo, -w / 2, -h / 2, w, h);
   else { ctx.fillStyle = '#ccc'; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.fillStyle = '#000'; ctx.font = 'bold 9px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('yükleniyo', 0, 3); }
@@ -503,7 +572,8 @@ function drawEnik(x, y, dir, rot, now) {
     const drunk = cfg.sarhos ? Math.sin(tick * 0.09) * .35 : 0;
     photoBox(x, y - 10 - stepPose * 4, (stepPose ? .14 : -.14) + drunk, dir);
   } else if (state === 'air') {
-    photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1);  // düşerken yavaşça döner
+    const k = 1 + Math.min(.3, Math.max(0, e.vy) * .02) + e.sq / 8 * .25;   // hızlandıkça uzar
+    photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1, k);  // düşerken yavaşça döner
   } else {
     const t = Math.min(1, (now - winAt) / 250);          // yere çakılınca yamyassı olup geri gelsin
     ctx.save(); ctx.translate(x, y); ctx.scale(1 + .35 * (1 - t), 1 - .35 * (1 - t)); photoBox(0, -27, 0, 1); ctx.restore();
@@ -523,11 +593,42 @@ function drawRagdoll(now) {
   ctx.restore();
 }
 
+/* ---------- Ses: dosyasız, tarayıcıda üretilen bip bop ---------- */
+let ac = null, muted = false;
+try { muted = localStorage.getItem('enikMute') === '1'; } catch (_) {}
+$('snd').textContent = muted ? '🔇' : '🔊';
+function unlockAudio() {
+  if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) {} }
+  if (ac && ac.state === 'suspended') ac.resume();
+}
+function beep(f0, f1, dur, type, vol, delay) {
+  if (muted || !ac) return;
+  const t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur);
+}
+function noise(dur, vol) {
+  if (muted || !ac) return;
+  const n = Math.floor(ac.sampleRate * dur), buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const s = ac.createBufferSource(), g = ac.createGain(); g.gain.value = vol; s.buffer = buf; s.connect(g); g.connect(ac.destination); s.start();
+}
+const sfx = {
+  jump: () => beep(200, 600, .16, 'square', .05),
+  die:  () => { noise(.25, .12); beep(320, 50, .45, 'sawtooth', .07); },
+  win:  near => { [523, 659, 784, 1047].forEach((f, i) => beep(f, f, .14, 'square', .05, i * .09)); if (near) beep(900, 1800, .2, 'triangle', .08, .4); }
+};
+$('snd').onclick = () => {
+  muted = !muted; try { localStorage.setItem('enikMute', muted ? '1' : '0'); } catch (_) {}
+  $('snd').textContent = muted ? '🔇' : '🔊'; unlockAudio();
+};
+
 /* ---------- Kontroller: tek dokunuş ---------- */
-cv.addEventListener('pointerdown', ev => { ev.preventDefault(); jump(); });
+cv.addEventListener('pointerdown', ev => { ev.preventDefault(); unlockAudio(); jump(); });
 addEventListener('keydown', ev => {
   if (ev.key !== ' ' && ev.key !== 'Enter' && ev.key !== 'ArrowDown') return;
-  ev.preventDefault();
+  ev.preventDefault(); unlockAudio();
   if (state === 'ready') jump();
   else if (state === 'dead' && performance.now() - deadAt > 800) newGame();
 });
@@ -556,16 +657,28 @@ $('gif').onclick = async () => {
   } finally { b.disabled = false; }
 };
 $('share').onclick = async () => {
-  const text = shareText();
+  const b = $('share'); if (b.disabled) return;
+  const text = shareText(), old = b.textContent;
   if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', seviye:lvl });
-  if (navigator.share) { try { await navigator.share({ text, url:GAME_URL }); } catch (_) {} return; }
-  window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(GAME_URL), '_blank', 'noopener');
+  b.disabled = true; b.textContent = 'Link hazırlanıyor… ⏳';
+  const w = navigator.share ? null : window.open('about:blank', '_blank');   // popup engelleyici async'ten sonra açmaya izin vermez
+  let url = GAME_URL;
+  try {                                                  // GIF yüklenebilirse linkin önizlemesi GIF olur, olmazsa düz oyun linki
+    if (!shareUrl) { if (!gifBlob) gifBlob = await makeGif(); if (gifBlob) shareUrl = await uploadGif(gifBlob); }
+    if (shareUrl) url = shareUrl;
+  } catch (_) {}
+  b.disabled = false; b.textContent = old;
+  if (navigator.share) { try { await navigator.share({ text, url }); } catch (_) {} return; }
+  const href = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
+  if (w) w.location.href = href; else window.open(href, '_blank', 'noopener');
 };
 
 /* ---------- Döngü ---------- */
 let last = performance.now(), acc = 0;
 function loop(now) {
-  acc = Math.min(acc + (now - last), 200); last = now;
+  // deliğe girerken kısa ağır çekim: kıl payı geçişler daha heyecanlı
+  const slowmo = state === 'air' && e.y > D - 150 && e.y < D + SLAB;
+  acc = Math.min(acc + (now - last) * (slowmo ? .45 : 1), 200); last = now;
   while (acc >= STEP) { step(); acc -= STEP; }
   draw(now); recordFrame(now);
   requestAnimationFrame(loop);
