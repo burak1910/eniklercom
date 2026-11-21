@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#1a0d08">
-<title>Enik Düşüşü – Dikenlerden Kaç! | enikler.com</title>
-<meta name="description" content="Eniği kuyuya at, dikenlere değmeden ne kadar derine düşebilirsin? Rezalet'ten Tanrısal'a rütbeni kap, skorunu X'te paylaş!">
+<title>Enik Düşüşü – Tam Zamanında Atla! | enikler.com</title>
+<meta name="description" content="Tam zamanında dokun, eniği dikenli deliğe cuk diye düşür! Rezalet'ten Tanrısal'a rütbeni kap, skorunu X'te paylaş.">
 <link rel="canonical" href="https://enikler.com/oyun/enik-dusus/">
 <meta property="og:site_name" content="enikler.com">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://enikler.com/oyun/enik-dusus/">
-<meta property="og:title" content="Enik Düşüşü 🐾 Ne kadar derine düşebilirsin?">
-<meta property="og:description" content="Dikenlere değmeden düş, Tanrısal rütbesine ulaş. Beni geçebilir misin?">
+<meta property="og:title" content="Enik Düşüşü 🐾 Cuk diye düşürebilir misin?">
+<meta property="og:description" content="Tam zamanında atla, dikenlere değmeden dibe düş. Beni geçebilir misin?">
 <meta property="og:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Enik Düşüşü 🐾 Ne kadar derine düşebilirsin?">
-<meta name="twitter:description" content="Dikenlere değmeden düş, Tanrısal rütbesine ulaş. Beni geçebilir misin?">
+<meta name="twitter:title" content="Enik Düşüşü 🐾 Cuk diye düşürebilir misin?">
+<meta name="twitter:description" content="Tam zamanında atla, dikenlere değmeden dibe düş. Beni geçebilir misin?">
 <meta name="twitter:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -56,16 +56,16 @@
 <div id="wrap">
   <canvas id="c" aria-label="Enik Düşüşü oyunu"></canvas>
   <div id="hud">
-    <div><div class="m"><span id="dm">0</span><small> m</small></div><a id="home" href="/">← enikler.com</a></div>
-    <div class="best">En iyi<br><span id="bm">0</span> m</div>
+    <div><div class="m"><small>Seviye </small><span id="lv">1</span></div><a id="home" href="/">← enikler.com</a></div>
+    <div class="best">En iyi<br><span id="bm">–</span></div>
   </div>
   <div id="pop"></div>
   <div id="over" class="hidden">
     <div class="card">
       <div style="font-size:3rem">🐾</div>
       <div class="rank" id="oRank">Rezalet</div>
-      <div class="dep"><span id="oDep">0</span> metre düştün</div>
-      <div class="bst">En iyin: <span id="oBest">0</span> m</div>
+      <div class="dep">Seviye <span id="oLv">1</span></div>
+      <div class="bst">En iyin: <span id="oBest">–</span></div>
       <div id="oRec" class="rec hidden">YENİ REKOR!</div>
       <button class="btn go" id="again" type="button">Tekrar Dene</button>
       <button class="btn sh" id="share" type="button">Skorunu Paylaş 𝕏</button>
@@ -81,12 +81,14 @@ const $ = id => document.getElementById(id);
 const GAME_URL = 'https://enikler.com/oyun/enik-dusus/';
 
 /* ---------- Ayarlar ---------- */
-const W = 360;              // dünya genişliği (birim)
-const SEG = 160;            // duvar segment yüksekliği
-const ZONE = 500;           // her rütbe bandının yüksekliği (50 m)
-const LEDGE = 150;          // başlangıç platformunun sağ ucu
-const ER = 13;              // enik yarıçapı
-const SPIKE = 12;           // diken boyu
+const W = 360;          // dünya genişliği (birim)
+const D = 1600;         // kuyunun derinliği
+const LEDGE = 100;      // platformun sağ ucu = sol duvarın üstü
+const TOP_R = 300;   // sağ duvarın üstü
+const ER = 13;          // enik yarıçapı
+const SPIKE = 11;       // diken boyu
+const HIT = ER * 0.8 + SPIKE * 0.5; // merkezden duvara izin verilen en yakın mesafe
+const STEP = 1000 / 60; // sabit fizik adımı (her cihazda aynı zıplama)
 const RANKS = [
   ['Rezalet',    '#2a0b08', '#ff8a7a'],
   ['Kötü',       '#3b1209', '#ff9e6b'],
@@ -100,16 +102,16 @@ const RANKS = [
   ['Efsane',     '#44122f', '#ff6ec4'],
   ['Tanrısal',   '#3d3410', '#ffe14d']
 ];
-const rankOf = y => RANKS[Math.max(0, Math.min(RANKS.length - 1, Math.floor(y / ZONE)))];
+const BAND = D / (RANKS.length - 1); // ilk 10 rütbe kuyu boyunca, Tanrısal = dibe ulaşmak
 
 /* ---------- Durum ---------- */
 let scale = 1, viewH = 600, dpr = 1;
-let L = [], R = [];                 // segment başına sol/sağ duvar x
-let e, state, camY, maxY, shake, parts, lastZone, best = 0, t0 = 0, deadAt = 0;
-const keys = { l:false, r:false }, ptrs = new Map();
+let lvl, cfg, e, state, camY, shake, parts, deadAt = 0, deadRank = 0, best = null, winAt = 0;
 
-try { best = +localStorage.getItem('enikDususBest') || 0; } catch (_) {}
-$('bm').textContent = best;
+try { best = JSON.parse(localStorage.getItem('enikDususBest2')); } catch (_) {}
+const scoreOf = (l, r) => (l - 1) * RANKS.length + r;
+const fmt = b => b ? 'Sv ' + b.l + ' · ' + RANKS[b.r][0] : '–';
+$('bm').textContent = fmt(best);
 
 function resize() {
   const r = cv.getBoundingClientRect();
@@ -119,108 +121,103 @@ function resize() {
 }
 addEventListener('resize', resize);
 
-/* ---------- Kuyu üretimi ---------- */
-function genTo(y) {
-  while ((L.length - 1) * SEG < y + SEG * 2) {
-    const i = L.length, d = i * SEG;
-    if (i === 0) { L.push(LEDGE); R.push(W - 12); continue; }
-    if (i === 1) { L.push(LEDGE - 10); R.push(W - 40); continue; }
-    const gap = Math.max(70, 205 - d * 0.02);
-    const prevC = (L[i - 1] + R[i - 1]) / 2;
-    const shift = 30 + Math.min(d * 0.008, 60);
-    let c = prevC + (Math.random() * 2 - 1) * shift;
-    c = Math.max(gap / 2 + 14, Math.min(W - gap / 2 - 14, c));
-    L.push(c - gap / 2); R.push(c + gap / 2);
-  }
+/* ---------- Seviye ---------- */
+function makeLevel(l) {
+  const bw = Math.max(40, 64 - 2.5 * (l - 1));                 // dipteki deliğin genişliği
+  const cx = l === 1 ? 156 : 140 + Math.random() * 32;       // deliğin ortası
+  const speed = Math.min(2.0, 1.1 + 0.09 * (l - 1));         // eniğin yürüme hızı
+  return { bw, cx, speed, lb: cx - bw / 2, rb: cx + bw / 2 };
 }
-function wallAt(arr, y) {
-  if (y <= 0) return arr[0];
-  const i = Math.floor(y / SEG), f = (y - i * SEG) / SEG;
-  genTo(y + SEG);
-  return arr[i] + (arr[i + 1] - arr[i]) * f;
-}
+const lx = y => LEDGE + (cfg.lb - LEDGE) * Math.min(1, Math.max(0, y) / D);
+const rx = y => TOP_R + (cfg.rb - TOP_R) * Math.min(1, Math.max(0, y) / D);
 
-/* ---------- Oyun akışı ---------- */
-function reset() {
-  L = []; R = []; genTo(1200);
-  e = { x:40, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
-  state = 'ready'; camY = -viewH * 0.45; maxY = 0; shake = 0; parts = []; lastZone = 0;
-  $('dm').textContent = 0; $('over').classList.add('hidden');
+function startLevel(l) {
+  lvl = l; cfg = makeLevel(l);
+  e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
+  state = 'ready'; parts = [];
+  $('lv').textContent = lvl;
+}
+function newGame() {
+  startLevel(1); camY = -viewH * 0.45; shake = 0;
+  $('over').classList.add('hidden');
 }
 
 function jump() {
   if (state !== 'ready') return;
-  state = 'air'; e.vy = -6.2; e.vx = 2.7;
-  if (t0 === 0) t0 = performance.now();
+  state = 'air'; e.vy = -6; e.vx = 8.8;
+}
+
+function burst(x, y, n, colors) {
+  for (let k = 0; k < n; k++) {
+    const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 4;
+    parts.push({ x, y, vx:Math.cos(a) * s, vy:Math.sin(a) * s - 1.5, life:1, c:colors[k % colors.length] });
+  }
+}
+
+function pop(text, color) {
+  const p = $('pop'); p.textContent = text; p.style.color = color; p.classList.add('on');
+  clearTimeout(pop.t); pop.t = setTimeout(() => p.classList.remove('on'), 1100);
 }
 
 function die() {
-  if (state === 'dead') return;
   state = 'dead'; deadAt = performance.now(); shake = 14;
+  deadRank = Math.max(0, Math.min(RANKS.length - 2, Math.floor(e.y / BAND)));
   try { navigator.vibrate && navigator.vibrate(70); } catch (_) {}
-  for (let k = 0; k < 22; k++) {
-    const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 4;
-    parts.push({ x:e.x, y:e.y, vx:Math.cos(a) * s, vy:Math.sin(a) * s - 1, life:1, c:k % 3 ? '#f4d9a8' : '#c98b4a' });
-  }
-  const m = Math.floor(maxY / 10), rk = rankOf(maxY), rec = m > best;
-  if (rec) { best = m; try { localStorage.setItem('enikDususBest', best); } catch (_) {} $('bm').textContent = best; }
-  if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', metre:m });
+  burst(e.x, e.y, 22, ['#f4d9a8', '#f4d9a8', '#c98b4a']);
+  const sc = scoreOf(lvl, deadRank), rec = !best || sc > scoreOf(best.l, best.r);
+  if (rec) { best = { l:lvl, r:deadRank }; try { localStorage.setItem('enikDususBest2', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
+  if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', seviye:lvl, rutbe:RANKS[deadRank][0] });
   setTimeout(() => {
-    $('oRank').textContent = rk[0]; $('oRank').style.color = rk[1] === '#3d3410' ? '#d9a400' : shade(rk[2]);
-    $('oDep').textContent = m; $('oBest').textContent = best;
+    if (state !== 'dead') return;
+    const rk = RANKS[deadRank];
+    $('oRank').textContent = rk[0]; $('oRank').style.color = shade(rk[2]);
+    $('oLv').textContent = lvl; $('oBest').textContent = fmt(best);
     $('oRec').classList.toggle('hidden', !rec);
     $('over').classList.remove('hidden');
   }, 750);
 }
-const shade = hex => { // açık rengi kartta okunur yapmak için koyulaştır
+const shade = hex => {
   const n = parseInt(hex.slice(1), 16), f = .62;
   return 'rgb(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => Math.round(v * f)).join(',') + ')';
 };
 
-function popZone(z) {
-  const rk = RANKS[Math.min(z, RANKS.length - 1)], p = $('pop');
-  p.textContent = rk[0] + '!'; p.style.color = rk[2]; p.classList.add('on');
-  clearTimeout(popZone.t); popZone.t = setTimeout(() => p.classList.remove('on'), 900);
+function win() {
+  state = 'win'; winAt = performance.now();
+  e.y = D - ER; e.vy = 0; e.vx = 0; e.rot = 0;
+  pop('Tanrısal! 🎉', RANKS[RANKS.length - 1][2]);
+  burst(e.x, e.y, 30, ['#ffe14d', '#ff6ec4', '#5cc8ff', '#5cf08a']);
+  try { navigator.vibrate && navigator.vibrate([30, 40, 30]); } catch (_) {}
+  const r = RANKS.length - 1;
+  if (!best || scoreOf(lvl, r) > scoreOf(best.l, best.r)) { best = { l:lvl, r }; try { localStorage.setItem('enikDususBest2', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
+  if (typeof gtag === 'function') gtag('event', 'seviye_gecti', { oyun:'enik_dusus', seviye:lvl });
 }
 
-/* ---------- Güncelleme ---------- */
-function update(dt) {
+/* ---------- Fizik (sabit adım) ---------- */
+function step() {
   if (state === 'ready') {
-    e.x += 1.3 * e.dir * dt; e.walk += .25 * dt;
+    e.x += cfg.speed * e.dir; e.walk += .25;
     if (e.x > LEDGE - 14) { e.x = LEDGE - 14; e.dir = -1; }
     if (e.x < 20) { e.x = 20; e.dir = 1; }
   } else if (state === 'air') {
-    const steer = (keys.r ? 1 : 0) - (keys.l ? 1 : 0) + steerTouch();
-    const depth = Math.max(0, e.y);
-    const maxVy = 5 + Math.min(depth * 0.0006, 4);
-    e.vy = Math.min(maxVy, e.vy + 0.36 * dt);
-    if (e.y > 4) { e.vx += steer * 0.62 * dt; e.vx *= Math.pow(0.9, dt); }
-    e.vx = Math.max(-6.5, Math.min(6.5, e.vx));
     const py = e.y;
-    e.x += e.vx * dt; e.y += e.vy * dt;
-    e.rot += (e.vx * 0.06 - e.rot) * 0.2 * dt;
-    e.x = Math.max(ER, Math.min(W - ER, e.x));
-
-    // tekrar platforma kondu mu?
-    if (py <= 0 && e.y > 0 && e.x < LEDGE - 2) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; state = 'ready'; e.dir = 1; return; }
-
-    if (e.y > ER * 0.5) {
-      const lx = wallAt(L, e.y), rx = wallAt(R, e.y), pad = SPIKE * 0.55;
-      if (e.x - ER * .8 < lx + pad || e.x + ER * .8 > rx - pad) { die(); return; }
+    e.vy = Math.min(12, e.vy + 0.4);
+    e.vx *= 0.92;
+    e.x += e.vx; e.y += e.vy;
+    e.rot += (e.vx * 0.05 - e.rot) * 0.2;
+    // erken dokunduysa tekrar platforma kondu
+    if (py <= 0 && e.y > 0 && e.x < LEDGE) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; e.dir = 1; state = 'ready'; return; }
+    if (e.y > 0) {
+      if (e.x - HIT < lx(e.y) || e.x + HIT > rx(e.y)) { die(); return; }
+      if (e.y >= D - ER) { win(); return; }
     }
-    if (e.y > maxY) {
-      maxY = e.y; $('dm').textContent = Math.floor(maxY / 10);
-      const z = Math.floor(maxY / ZONE);
-      if (z > lastZone) { lastZone = z; popZone(z); }
-    }
+  } else if (state === 'win') {
+    if (performance.now() - winAt > 1400) startLevel(lvl + 1);
   }
-  // kamera
-  const target = state === 'ready' ? -viewH * 0.45 : e.y - viewH * 0.38;
-  camY += (target - camY) * Math.min(1, 0.12 * dt);
-  // parçacıklar
-  parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += .2 * dt; p.life -= .02 * dt; });
+  parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .2; p.life -= .02; });
   parts = parts.filter(p => p.life > 0);
-  shake *= Math.pow(0.86, dt);
+  shake *= 0.86;
+  const target = state === 'ready' ? -viewH * 0.45 : Math.min(e.y - viewH * 0.4, D + 60 - viewH * 0.8);
+  camY += (target - camY) * (state === 'ready' ? 0.08 : 0.15);
 }
 
 /* ---------- Çizim ---------- */
@@ -230,61 +227,63 @@ function draw(now) {
   const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
   ctx.setTransform(scale, 0, 0, scale, sx * scale, (sy - camY) * scale);
   const top = camY, bot = camY + viewH;
-  genTo(bot + SEG);
 
-  // gökyüzü yıldızları
+  // yıldızlar
   if (top < 0) {
     ctx.fillStyle = 'rgba(255,240,200,.35)';
     for (let k = 0; k < 30; k++) { const x = (k * 97) % W, y = -((k * 53) % 600) - 20; if (y > top) ctx.fillRect(x, y, 2, 2); }
   }
 
   // rütbe bantları
-  for (let z = Math.max(0, Math.floor(top / ZONE)); z * ZONE < bot; z++) {
-    const rk = RANKS[Math.min(z, RANKS.length - 1)];
-    ctx.fillStyle = rk[1]; ctx.fillRect(0, z * ZONE, W, ZONE);
-    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, z * ZONE, W, 3);
-    const ly = z * ZONE + ZONE * 0.5, cx = (wallAt(L, ly) + wallAt(R, ly)) / 2;
-    ctx.font = '900 30px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let z = 0; z < RANKS.length - 1; z++) {
+    const y0 = z * BAND; if (y0 > bot || y0 + BAND < top) continue;
+    const rk = RANKS[z];
+    ctx.fillStyle = rk[1]; ctx.fillRect(0, y0, W, BAND);
+    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, y0, W, 3);
+    const ly = y0 + BAND / 2;
+    ctx.font = '900 ' + Math.min(30, (rx(ly) - lx(ly)) / 4) + 'px Nunito, sans-serif';
     ctx.fillStyle = rk[2]; ctx.globalAlpha = .55;
-    ctx.fillText(z >= RANKS.length ? rk[0] + ' ×' + (z - RANKS.length + 2) : rk[0], cx, ly);
+    ctx.fillText(rk[0], (lx(ly) + rx(ly)) / 2, ly);
     ctx.globalAlpha = 1;
   }
+  // dip: Tanrısal yatağı
+  const gr = RANKS[RANKS.length - 1];
+  ctx.fillStyle = gr[1]; ctx.fillRect(0, D, W, 400);
+  ctx.fillStyle = '#c98b4a'; ctx.fillRect(cfg.lb, D, cfg.bw, 10);
+  ctx.fillStyle = '#ff9eb5'; ctx.beginPath(); ctx.ellipse(cfg.cx, D + 2, cfg.bw / 2 - 2, 6, 0, Math.PI, 0); ctx.fill();
+  ctx.font = '900 22px Nunito, sans-serif'; ctx.fillStyle = gr[2];
+  ctx.fillText('Tanrısal', cfg.cx, D + 40);
 
   // kaya duvarları
-  const i0 = Math.max(0, Math.floor(top / SEG)), i1 = Math.ceil(bot / SEG) + 1;
-  ctx.fillStyle = 'rgba(20,8,5,.82)';
-  ctx.beginPath(); ctx.moveTo(0, i0 * SEG);
-  for (let i = i0; i <= i1; i++) ctx.lineTo(L[i], i * SEG);
-  ctx.lineTo(0, i1 * SEG); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(W, i0 * SEG);
-  for (let i = i0; i <= i1; i++) ctx.lineTo(R[i], i * SEG);
-  ctx.lineTo(W, i1 * SEG); ctx.fill();
+  ctx.fillStyle = 'rgba(20,8,5,.88)';
+  ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + 400); ctx.lineTo(0, D + 400); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + 400); ctx.lineTo(W, D + 400); ctx.fill();
 
-  // duvar kenarları + dikenler
-  for (const [arr, side] of [[L, 1], [R, -1]]) {
+  // duvar kenarı + dikenler
+  for (const [x0, y0, x1, y1, side] of [[LEDGE, 0, cfg.lb, D, 1], [TOP_R, 0, cfg.rb, D, -1]]) {
     ctx.strokeStyle = '#c98b4a'; ctx.lineWidth = 3;
-    ctx.beginPath(); for (let i = i0; i <= i1; i++) (i === i0 ? ctx.moveTo : ctx.lineTo).call(ctx, arr[i], i * SEG); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
+    const nx = uy * side, ny = -ux * side, n = Math.floor(len / 14);
     ctx.fillStyle = '#9b6bff'; ctx.strokeStyle = '#e9ddff'; ctx.lineWidth = 1.2;
-    for (let i = i0; i < i1; i++) {
-      const x0 = arr[i], y0 = i * SEG, x1 = arr[i + 1], y1 = (i + 1) * SEG;
-      const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
-      const nx = uy * side, ny = -ux * side; // içe bakan normal
-      const n = Math.floor(len / 14);
-      for (let k = 0; k < n; k++) {
-        const a = k / n, b = (k + 1) / n, m = (a + b) / 2;
-        const ax = x0 + (x1 - x0) * a, ay = y0 + (y1 - y0) * a, bx = x0 + (x1 - x0) * b, by = y0 + (y1 - y0) * b;
-        const mx = x0 + (x1 - x0) * m + nx * SPIKE, my = y0 + (y1 - y0) * m + ny * SPIKE;
-        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(mx, my); ctx.lineTo(bx, by); ctx.closePath(); ctx.fill(); ctx.stroke();
-      }
+    const k0 = Math.max(0, Math.floor((top - y0 - 20) / (y1 - y0) * n)), k1 = Math.min(n, Math.ceil((bot - y0 + 20) / (y1 - y0) * n));
+    for (let k = k0; k < k1; k++) {
+      const a = k / n, b = (k + 1) / n, m = (a + b) / 2;
+      ctx.beginPath();
+      ctx.moveTo(x0 + (x1 - x0) * a, y0 + (y1 - y0) * a);
+      ctx.lineTo(x0 + (x1 - x0) * m + nx * SPIKE, y0 + (y1 - y0) * m + ny * SPIKE);
+      ctx.lineTo(x0 + (x1 - x0) * b, y0 + (y1 - y0) * b);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
     }
   }
 
-  // başlangıç platformu
+  // platform
   ctx.fillStyle = '#FFF4D6'; ctx.fillRect(0, -1, LEDGE, 7);
-  ctx.fillStyle = 'rgba(20,8,5,.82)'; ctx.fillRect(0, 6, LEDGE - 2, 4);
+  ctx.fillRect(TOP_R, -1, W - TOP_R, 7);
 
   // enik
-  if (state !== 'dead') drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : (e.vx >= 0 ? 1 : -1), e.rot, now);
+  if (state !== 'dead') drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : 1, e.rot, now);
 
   // parçacıklar
   parts.forEach(p => { ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, 7); ctx.fill(); });
@@ -292,91 +291,64 @@ function draw(now) {
 
   // ipucu
   if (state === 'ready') {
-    ctx.font = '900 20px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#FFB703';
     const bob = Math.sin(now / 250) * 3;
-    ctx.fillText('Kenara gelince dokun!', W / 2, -150 + bob);
+    ctx.font = '900 20px Nunito, sans-serif'; ctx.fillStyle = '#FFB703';
+    ctx.fillText(lvl === 1 ? 'Tam zamanında dokun!' : 'Seviye ' + lvl, W / 2, -150 + bob);
     ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = 'rgba(255,244,214,.8)';
-    ctx.fillText('Düşerken ekranın sağına / soluna bas', W / 2, -122 + bob);
+    ctx.fillText(lvl === 1 ? 'Eniği deliğe cuk diye düşür 🐾' : 'Delik daraldı, enik hızlandı!', W / 2, -124 + bob);
   }
 }
 
 function drawEnik(x, y, dir, rot, now) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(dir, 1);
   const fall = state === 'air', leg = state === 'ready' ? Math.sin(e.walk) * 3 : 0;
-  // kuyruk
   ctx.strokeStyle = '#d9a066'; ctx.lineWidth = 4; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-11, 2); ctx.quadraticCurveTo(-20, -6 + Math.sin(now / 90) * 4, -17, -13); ctx.stroke();
-  // bacaklar
   ctx.strokeStyle = '#e8b97f'; ctx.lineWidth = 4.5;
   ctx.beginPath();
   ctx.moveTo(-6, 7); ctx.lineTo(-6 + leg, fall ? 11 : 13);
   ctx.moveTo(6, 7); ctx.lineTo(6 - leg, fall ? 11 : 13); ctx.stroke();
-  // gövde
   ctx.fillStyle = '#f4d9a8'; ctx.beginPath(); ctx.ellipse(-1, 3, 12, 9, 0, 0, 7); ctx.fill();
-  // kafa
   ctx.beginPath(); ctx.arc(7, -6, 10, 0, 7); ctx.fill();
-  // kulaklar
   ctx.fillStyle = '#c98b4a';
   ctx.beginPath(); ctx.ellipse(0, -9, 4, 8, fall ? -1.2 : 0.35, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.ellipse(13, -11, 3.5, 7, fall ? 1.1 : -0.25, 0, 7); ctx.fill();
-  // göz + burun
   ctx.fillStyle = '#2B2118';
   if (fall) { ctx.beginPath(); ctx.arc(10, -8, 2.6, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(10.8, -8.8, .9, 0, 7); ctx.fill(); }
   else { ctx.beginPath(); ctx.arc(10, -8, 1.9, 0, 7); ctx.fill(); }
   ctx.fillStyle = '#2B2118'; ctx.beginPath(); ctx.arc(16.5, -4.5, 2.2, 0, 7); ctx.fill();
-  // ağız (düşerken "o")
   if (fall) { ctx.beginPath(); ctx.arc(13, -0.5, 1.8, 0, 7); ctx.fill(); }
-  // yanak
   ctx.fillStyle = 'rgba(240,80,110,.35)'; ctx.beginPath(); ctx.arc(7, -2, 2.5, 0, 7); ctx.fill();
   ctx.restore();
 }
 
-/* ---------- Kontroller ---------- */
-function steerTouch() {
-  let s = 0; const r = cv.getBoundingClientRect();
-  ptrs.forEach(px => { s += px - r.left < r.width / 2 ? -1 : 1; });
-  return Math.max(-1, Math.min(1, s));
-}
-cv.addEventListener('pointerdown', ev => {
-  ev.preventDefault(); ptrs.set(ev.pointerId, ev.clientX);
-  if (state === 'ready') jump();
-});
-cv.addEventListener('pointermove', ev => { if (ptrs.has(ev.pointerId)) ptrs.set(ev.pointerId, ev.clientX); });
-['pointerup', 'pointercancel', 'pointerleave'].forEach(n => cv.addEventListener(n, ev => ptrs.delete(ev.pointerId)));
-
+/* ---------- Kontroller: tek dokunuş ---------- */
+cv.addEventListener('pointerdown', ev => { ev.preventDefault(); jump(); });
 addEventListener('keydown', ev => {
-  const k = ev.key;
-  if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = true;
-  else if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = true;
-  else if (k === ' ' || k === 'Enter' || k === 'ArrowDown') {
-    ev.preventDefault();
-    if (state === 'ready') jump();
-    else if (state === 'dead' && performance.now() - deadAt > 800) reset();
-  }
-});
-addEventListener('keyup', ev => {
-  const k = ev.key;
-  if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = false;
-  if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = false;
+  if (ev.key !== ' ' && ev.key !== 'Enter' && ev.key !== 'ArrowDown') return;
+  ev.preventDefault();
+  if (state === 'ready') jump();
+  else if (state === 'dead' && performance.now() - deadAt > 800) newGame();
 });
 
-$('again').onclick = () => { ptrs.clear(); reset(); };
+$('again').onclick = newGame;
 $('share').onclick = async () => {
-  const m = Math.floor(maxY / 10), rk = rankOf(maxY)[0];
-  const text = `Enik Düşüşü'nde ${m} metre düştüm, rütbem: ${rk} 🐾 Beni geçebilir misin?`;
-  if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', metre:m });
-  if (navigator.share) { try { await navigator.share({ text, url:GAME_URL }); return; } catch (_) { return; } }
+  const rk = RANKS[deadRank][0];
+  const text = `Enik Düşüşü'nde Seviye ${lvl}'de "${rk}" oldum 🐾 Eniği cuk diye düşürebilir misin?`;
+  if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', seviye:lvl });
+  if (navigator.share) { try { await navigator.share({ text, url:GAME_URL }); } catch (_) {} return; }
   window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(GAME_URL), '_blank', 'noopener');
 };
 
 /* ---------- Döngü ---------- */
-let last = performance.now();
+let last = performance.now(), acc = 0;
 function loop(now) {
-  const dt = Math.min(2.5, (now - last) / 16.667); last = now;
-  update(dt); draw(now);
+  acc = Math.min(acc + (now - last), 200); last = now;
+  while (acc >= STEP) { step(); acc -= STEP; }
+  draw(now);
   requestAnimationFrame(loop);
 }
-resize(); reset(); requestAnimationFrame(loop);
+resize(); newGame(); requestAnimationFrame(loop);
 })();
 </script>
 </body>
