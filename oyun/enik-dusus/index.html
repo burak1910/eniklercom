@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#5ab4ff">
 <title>Enik Düşüşü – Tam Zamanında Atla! | enikler.com</title>
-<meta name="description" content="Tam zamanında dokun, eniği dikenli deliğe cuk diye düşür! Rezalet'ten Tanrısal'a rütbeni kap, skorunu X'te paylaş.">
+<meta name="description" content="Tam zamanında dokun, eniği dikenli deliğe cuk diye düşür! Her seviyede yeni engel: sarhoş enik, rüzgar, kayan delik. Oyununu GIF olarak paylaş.">
 <link rel="canonical" href="https://enikler.com/oyun/enik-dusus/">
 <meta property="og:site_name" content="enikler.com">
 <meta property="og:type" content="website">
@@ -39,7 +39,7 @@
 
   #over { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(14,7,5,.55); }
   #over.hidden { display:none; }
-  .card { width:100%; max-width:340px; background:#FFF8E7; color:var(--ink); border-radius:28px; padding:24px 20px 20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:in .3s ease-out; transform:rotate(-2deg); border:3px solid #000; }
+  .card { width:100%; max-width:340px; background:#FFF8E7; color:var(--ink); border-radius:28px; padding:24px 20px 20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:in .3s ease-out; transform:rotate(-2deg); border:3px solid #000; max-height:100%; overflow:auto; }
   @keyframes in { from { transform:translateY(30px) scale(.9); opacity:0; } }
   .card .rank { font-weight:900; font-size:2.3rem; line-height:1.1; margin:2px 0 4px; }
   .card .dep { font-weight:900; font-size:1.2rem; }
@@ -48,6 +48,9 @@
   .btn { display:block; width:100%; margin-top:12px; border:0; border-radius:16px; padding:14px; font:700 1.15rem 'Comic Sans MS','Comic Neue',cursive; cursor:pointer; text-decoration:none; }
   .btn.go { background:var(--accent); color:#fff; box-shadow:0 5px 0 var(--accent-d); }
   .btn.sh { background:#111; color:#fff; box-shadow:0 5px 0 #000; }
+  .btn.gif { background:#ff3cb4; color:#fff; box-shadow:0 5px 0 #b3157a; }
+  .btn:disabled { opacity:.7; }
+  #gifPrev { display:block; margin:12px auto 0; max-height:170px; border:3px solid #000; transform:rotate(1.5deg); }
   .btn:active { transform:translateY(3px); box-shadow:none; }
   .card a.site { display:block; margin-top:14px; font-weight:800; font-size:.85rem; color:#8a7a66; text-decoration:none; }
 </style>
@@ -68,6 +71,8 @@
       <div class="bst">En iyin: <span id="oBest">–</span></div>
       <div id="oRec" class="rec hidden">YENİ REKOR!</div>
       <button class="btn go" id="again" type="button">Tekrar Dene</button>
+      <img id="gifPrev" class="hidden" alt="Son denemenin GIF'i">
+      <button class="btn gif" id="gif" type="button">GIF Olarak Paylaş 🎞️</button>
       <button class="btn sh" id="share" type="button">Skorunu Paylaş 𝕏</button>
       <a class="site" href="/">Diğer enik testleri için enikler.com 🐾</a>
     </div>
@@ -85,12 +90,13 @@ const W = 360;          // dünya genişliği (birim)
 const D = 1600;         // kuyunun derinliği
 const SLAB = 18;        // kuyunun dibindeki kaya tavanın kalınlığı
 const ROAD = D + 170;   // eniğin düştüğü yolun yüksekliği
-const LEDGE = 100;      // platformun sağ ucu = sol duvarın üstü
-const TOP_R = 300;   // sağ duvarın üstü
+const LEDGE = 160;      // platformun sağ ucu = sol duvarın üstü (uzun yürüyüş yolu)
+const TOP_R = 350;      // sağ duvarın üstü
 const ER = 13;          // enik yarıçapı
 const SPIKE = 11;       // diken boyu
 const HIT = ER * 0.8 + SPIKE * 0.5; // merkezden duvara izin verilen en yakın mesafe
 const STEP = 1000 / 60; // sabit fizik adımı (her cihazda aynı zıplama)
+const JUMP_VX = 9, JUMP_VY = -6, DRAG = 0.94; // atlayış: ~150 birim yatay kayma
 const RANKS = [
   ['Rezalet',    '#ff3030', '#ff8a7a'],
   ['Kötü',       '#ff8a00', '#ff9e6b'],
@@ -106,11 +112,20 @@ const RANKS = [
 ];
 const BAND = D / (RANKS.length - 1); // ilk 10 rütbe kuyu boyunca, Tanrısal = dibe ulaşmak
 
-/* ---------- Durum ---------- */
-let scale = 1, viewH = 600, dpr = 1;
-let lvl, cfg, e, state, camY, shake, parts, deadAt = 0, deadRank = 0, best = null, winAt = 0;
+/* Seviye atladıkça eklenen engeller */
+const MODS = {
+  hiz:    'Turbo Enik ⚡',
+  sarhos: 'Sarhoş Enik 🥴',
+  ruzgar: 'Rüzgar Var 🌬️',
+  kayan:  'Kayan Delik 🕳️'
+};
+const MOD_PLAN = [[], ['hiz'], ['sarhos'], ['ruzgar'], ['kayan'], ['sarhos', 'ruzgar'], ['ruzgar', 'kayan'], ['sarhos', 'kayan'], ['hiz', 'kayan']];
 
-try { best = JSON.parse(localStorage.getItem('enikDususBest2')); } catch (_) {}
+/* ---------- Durum ---------- */
+let scale = 1, viewH = 600, dpr = 1, tick = 0;
+let lvl, cfg, e, state, camY, shake, parts, deadAt = 0, deadRank = 0, best = null, winAt = 0, rag = null;
+
+try { best = JSON.parse(localStorage.getItem('enikDususBest3')); } catch (_) {}
 const scoreOf = (l, r) => (l - 1) * RANKS.length + r;
 const fmt = b => b ? 'Sv ' + b.l + ' · ' + RANKS[b.r][0] : '–';
 $('bm').textContent = fmt(best);
@@ -124,14 +139,30 @@ function resize() {
 addEventListener('resize', resize);
 
 /* ---------- Seviye ---------- */
+function modsFor(l) {
+  if (l <= MOD_PLAN.length) return MOD_PLAN[l - 1];
+  const all = Object.keys(MODS).sort(() => Math.random() - .5);
+  return all.slice(0, l >= 14 ? 3 : 2);
+}
 function makeLevel(l) {
-  const bw = Math.max(40, 64 - 2.5 * (l - 1));                 // dipteki deliğin genişliği
-  const cx = l === 1 ? 156 : 140 + Math.random() * 32;       // deliğin ortası
-  const speed = Math.min(2.0, 1.1 + 0.09 * (l - 1));         // eniğin yürüme hızı
-  return { bw, cx, speed, lb: cx - bw / 2, rb: cx + bw / 2 };
+  const mods = modsFor(l), has = m => mods.includes(m);
+  const bw = Math.max(36, 50 - 1.2 * (l - 1));                          // dipteki deliğin genişliği
+  const speed = Math.min(2.6, 1.4 + 0.1 * (l - 1)) * (has('hiz') ? 1.4 : 1); // yürüme hızı
+  const wind = has('ruzgar') ? (Math.random() < .5 ? -1 : 1) * (0.16 + Math.random() * 0.08) : 0;
+  // deliği, rüzgarla birlikte hâlâ ulaşılabilir olacak bir yere koy
+  const lo = Math.max(240, 200 + wind * 140), hi = Math.min(280, 280 + wind * 140);
+  const cx = l === 1 ? 262 : lo + Math.random() * Math.max(0, hi - lo);
+  return { l, mods, bw, speed, wind, amp:has('kayan') ? 16 : 0, phase:Math.random() * 6.28,
+           sarhos:has('sarhos'), cx0:cx, cx, lb:cx - bw / 2, rb:cx + bw / 2 };
+}
+function moveHole() {
+  if (!cfg.amp) return;
+  cfg.cx = cfg.cx0 + cfg.amp * Math.sin(tick * 0.045 + cfg.phase);
+  cfg.lb = cfg.cx - cfg.bw / 2; cfg.rb = cfg.cx + cfg.bw / 2;
 }
 const lx = y => LEDGE + (cfg.lb - LEDGE) * Math.min(1, Math.max(0, y) / D);
 const rx = y => TOP_R + (cfg.rb - TOP_R) * Math.min(1, Math.max(0, y) / D);
+const walkSpeed = () => cfg.speed * (cfg.sarhos ? 0.35 + 1.3 * (0.5 + 0.5 * Math.sin(tick * 0.05)) : 1);
 
 function startLevel(l) {
   nextPhoto(); rag = null;
@@ -139,15 +170,19 @@ function startLevel(l) {
   e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
   state = 'ready'; parts = [];
   $('lv').textContent = lvl;
+  recReset();
+  if (cfg.mods.length) pop(cfg.mods.map(m => MODS[m]).join(' + '), '#fff');
 }
 function newGame() {
   startLevel(1); camY = -viewH * 0.45; shake = 0;
   $('over').classList.add('hidden');
+  gifReset();
 }
 
 function jump() {
   if (state !== 'ready') return;
-  state = 'air'; e.vy = -6; e.vx = 8.8;
+  state = 'air'; e.vy = JUMP_VY; e.vx = JUMP_VX;
+  recStart();
 }
 
 function burst(x, y, n, colors) {
@@ -159,7 +194,7 @@ function burst(x, y, n, colors) {
 
 function pop(text, color) {
   const p = $('pop'); p.textContent = text; p.style.color = color; p.classList.add('on');
-  clearTimeout(pop.t); pop.t = setTimeout(() => p.classList.remove('on'), 1100);
+  clearTimeout(pop.t); pop.t = setTimeout(() => p.classList.remove('on'), 1300);
 }
 
 function die() {
@@ -168,8 +203,9 @@ function die() {
   try { navigator.vibrate && navigator.vibrate(70); } catch (_) {}
   burst(e.x, e.y, 10, ['#ff0000', '#ffee00', '#ffffff']);
   rag = { x:e.x, y:e.y - 8, vx:(e.x < (lx(e.y) + rx(e.y)) / 2 ? 1 : -1) * (2 + Math.random() * 2), vy:-9, spin:(Math.random() - .5) * .6, t:performance.now(), meme:MEMES[Math.floor(Math.random() * MEMES.length)] };
+  recEnd();
   const sc = scoreOf(lvl, deadRank), rec = !best || sc > scoreOf(best.l, best.r);
-  if (rec) { best = { l:lvl, r:deadRank }; try { localStorage.setItem('enikDususBest2', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
+  if (rec) { best = { l:lvl, r:deadRank }; try { localStorage.setItem('enikDususBest3', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
   if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', seviye:lvl, rutbe:RANKS[deadRank][0] });
   setTimeout(() => {
     if (state !== 'dead') return;
@@ -191,25 +227,28 @@ function win() {
   pop('Tanrısal! 🎉', RANKS[RANKS.length - 1][2]);
   burst(e.x, e.y, 30, ['#ffe14d', '#ff6ec4', '#5cc8ff', '#5cf08a']);
   try { navigator.vibrate && navigator.vibrate([30, 40, 30]); } catch (_) {}
+  recEnd();
   const r = RANKS.length - 1;
-  if (!best || scoreOf(lvl, r) > scoreOf(best.l, best.r)) { best = { l:lvl, r }; try { localStorage.setItem('enikDususBest2', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
+  if (!best || scoreOf(lvl, r) > scoreOf(best.l, best.r)) { best = { l:lvl, r }; try { localStorage.setItem('enikDususBest3', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
   if (typeof gtag === 'function') gtag('event', 'seviye_gecti', { oyun:'enik_dusus', seviye:lvl });
 }
 
 /* ---------- Fizik (sabit adım) ---------- */
 function step() {
+  tick++; moveHole();
   if (state === 'ready') {
-    e.x += cfg.speed * e.dir; e.walk += .25;
+    e.x += walkSpeed() * e.dir; e.walk += .25;
     if (e.x > LEDGE - 14) { e.x = LEDGE - 14; e.dir = -1; }
     if (e.x < 20) { e.x = 20; e.dir = 1; }
   } else if (state === 'air') {
     const py = e.y;
     e.vy = Math.min(12, e.vy + 0.4);
-    e.vx *= 0.92;
+    e.vx *= DRAG;
     e.x += e.vx; e.y += e.vy;
+    if (e.y > 0 && e.y < D + SLAB) e.x += cfg.wind;
     e.rot += (e.vx * 0.05 - e.rot) * 0.2;
     // erken dokunduysa tekrar platforma kondu
-    if (py <= 0 && e.y > 0 && e.x < LEDGE) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; e.dir = 1; state = 'ready'; return; }
+    if (py <= 0 && e.y > 0 && e.x < LEDGE) { e.y = 0; e.vy = 0; e.vx = 0; e.rot = 0; e.dir = 1; state = 'ready'; recReset(); return; }
     if (e.y > 0 && e.y < D + SLAB && (e.x - HIT < lx(e.y) || e.x + HIT > rx(e.y))) { die(); return; }
     if (e.y >= ROAD) { win(); return; }
   } else if (state === 'win') {
@@ -221,6 +260,53 @@ function step() {
   const target = state === 'ready' ? -viewH * 0.45 : Math.min(e.y - viewH * 0.4, ROAD + 130 - viewH);
   camY += (target - camY) * (state === 'ready' ? 0.08 : 0.15);
 }
+
+/* ---------- GIF kaydı: son denemeyi küçük karelerle sakla ---------- */
+const GW = 240, GIF_MS = 100, PRE = 8, MAX_FRAMES = 70, TAIL = 13;
+const gcv = document.createElement('canvas'), gctx = gcv.getContext('2d', { willReadFrequently:true });
+let rec = { mode:'pre', pre:[], frames:[], tail:0 }, lastGrab = 0, lastRun = null, gifBlob = null;
+function recReset() { if (rec.mode !== 'tail') { rec.mode = 'pre'; rec.pre = []; } }
+function recStart() { rec.frames = rec.pre.slice(); rec.mode = 'run'; }
+function recEnd() { rec.mode = 'tail'; rec.tail = TAIL; rec.runLvl = lvl; }
+function grab() {
+  const gh = Math.round(GW * cv.height / cv.width);
+  if (gcv.width !== GW || gcv.height !== gh) { gcv.width = GW; gcv.height = gh; }
+  gctx.drawImage(cv, 0, 0, GW, gh);
+  gctx.fillStyle = '#000'; gctx.fillRect(0, 0, GW, 18);
+  gctx.fillStyle = '#ffee00'; gctx.font = 'bold 12px ' + FONT; gctx.textAlign = 'center'; gctx.textBaseline = 'middle';
+  gctx.fillText('enikler.com · Enik Düşüşü · Seviye ' + lvl, GW / 2, 9);
+  return gctx.getImageData(0, 0, GW, gh);
+}
+function recordFrame(now) {
+  if (now - lastGrab < GIF_MS) return;
+  lastGrab = now;
+  if (rec.mode === 'pre') { rec.pre.push(grab()); if (rec.pre.length > PRE) rec.pre.shift(); }
+  else if (rec.mode === 'run') { if (rec.frames.length < MAX_FRAMES) rec.frames.push(grab()); }
+  else if (rec.mode === 'tail') {
+    rec.frames.push(grab());
+    if (--rec.tail <= 0) { lastRun = { frames:rec.frames, lvl:rec.runLvl }; gifBlob = null; rec.mode = state === 'dead' ? 'idle' : 'pre'; rec.pre = []; }
+  }
+}
+async function makeGif() {
+  const run = (rec.mode === 'tail' || rec.mode === 'idle') && rec.frames.length ? { frames:rec.frames } : lastRun;
+  if (!run || !run.frames.length) return null;
+  const { GIFEncoder, quantize, applyPalette } = await import('./gifenc.js');
+  const last = run.frames[run.frames.length - 1], w = last.width, h = last.height;
+  const frames = run.frames.filter(f => f.width === w && f.height === h);
+  const every = Math.max(1, Math.floor(frames.length / 6)), sample = [];
+  for (let i = 0; i < frames.length; i += every) sample.push(frames[i].data);
+  const buf = new Uint8ClampedArray(sample.reduce((n, d) => n + d.length, 0));
+  sample.reduce((o, d) => (buf.set(d, o), o + d.length), 0);
+  const palette = quantize(buf, 128);
+  const gif = GIFEncoder();
+  for (let i = 0; i < frames.length; i++) {
+    gif.writeFrame(applyPalette(frames[i].data, palette), w, h, { palette, delay:i === frames.length - 1 ? 1200 : GIF_MS });
+    if (i % 6 === 5) await new Promise(r => setTimeout(r));       // arayüz donmasın
+  }
+  gif.finish();
+  return new Blob([gif.bytes()], { type:'image/gif' });
+}
+function gifReset() { const b = $('gif'); b.disabled = false; b.textContent = 'GIF Olarak Paylaş 🎞️'; $('gifPrev').classList.add('hidden'); gifBlob = null; }
 
 /* ---------- Enik fotoğrafları (arka planı silinmemiş, aynen öyle) ---------- */
 const FONT = "'Comic Sans MS','Comic Neue','Chalkboard SE',cursive";
@@ -287,6 +373,16 @@ function draw(now) {
   // dip: delikten sokağa düşüş
   drawStreet(now);
 
+  // rüzgar çizgileri
+  if (cfg.wind) {
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    for (let k = 0; k < 26; k++) {
+      const y = (k * 61) % D + 30; if (y < top - 10 || y > bot + 10) continue;
+      const span = rx(y) - lx(y), off = ((tick * cfg.wind * 14 + k * 37) % span + span) % span, x = lx(y) + off;
+      const d = Math.sign(cfg.wind);
+      ctx.beginPath(); ctx.moveTo(x - 14 * d, y); ctx.lineTo(x + 14 * d, y); ctx.lineTo(x + 8 * d, y - 5); ctx.stroke();
+    }
+  }
   // duvarlar: düz kahverengi + kalın siyah kontur
   ctx.fillStyle = '#9b5a2b'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + SLAB); ctx.lineTo(0, D + SLAB); ctx.closePath(); ctx.fill(); ctx.stroke();
@@ -334,9 +430,10 @@ function draw(now) {
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.font = 'bold 21px ' + FONT; ctx.lineWidth = 4; ctx.strokeStyle = '#000'; ctx.fillStyle = '#ffee00';
     const t1 = lvl === 1 ? 'Tam zamanında dokun!!1' : 'Seviye ' + lvl + ' !!';
+    const modTxt = cfg.mods.map(m => MODS[m]).join(' + ');
     ctx.strokeText(t1, W / 2, -150 + bob); ctx.fillText(t1, W / 2, -150 + bob);
     ctx.font = 'bold 14px ' + FONT; ctx.fillStyle = '#fff'; ctx.lineWidth = 3;
-    const t2 = lvl === 1 ? 'eniği deliğe cuk diye düşür' : 'delik daraldı enik hızlandı';
+    const t2 = lvl === 1 ? 'eniği deliğe cuk diye düşür' : (modTxt || 'delik daraldı');
     ctx.strokeText(t2, W / 2, -124 + bob); ctx.fillText(t2, W / 2, -124 + bob);
   }
 
@@ -403,7 +500,8 @@ function photoBox(x, y, rot, flip) {
 function drawEnik(x, y, dir, rot, now) {
   if (state === 'ready') {
     const stepPose = Math.floor(e.walk / 1.6) % 2;       // 2 kareli "animasyon"
-    photoBox(x, y - 10 - stepPose * 4, stepPose ? .14 : -.14, dir);
+    const drunk = cfg.sarhos ? Math.sin(tick * 0.09) * .35 : 0;
+    photoBox(x, y - 10 - stepPose * 4, (stepPose ? .14 : -.14) + drunk, dir);
   } else if (state === 'air') {
     photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1);  // düşerken yavaşça döner
   } else {
@@ -413,7 +511,6 @@ function drawEnik(x, y, dir, rot, now) {
 }
 
 // ölünce fotoğraf fırlayıp dönerek uçar
-let rag = null;
 function drawRagdoll(now) {
   if (!rag) return;
   const t = (now - rag.t) / 16.667;
@@ -436,9 +533,30 @@ addEventListener('keydown', ev => {
 });
 
 $('again').onclick = newGame;
+const shareText = () => `Enik Düşüşü'nde Seviye ${lvl}'de "${RANKS[deadRank][0]}" oldum 🐾 Eniği cuk diye düşürebilir misin?`;
+$('gif').onclick = async () => {
+  const b = $('gif'); if (b.disabled) return;
+  b.disabled = true; b.textContent = 'GIF hazırlanıyor… ⏳';
+  try {
+    if (!gifBlob) gifBlob = await makeGif();
+    if (!gifBlob) { b.textContent = 'Kayıt bulunamadı 😿'; return; }
+    const url = URL.createObjectURL(gifBlob);
+    $('gifPrev').src = url; $('gifPrev').classList.remove('hidden');
+    if (typeof gtag === 'function') gtag('event', 'gif_paylas', { oyun:'enik_dusus', seviye:lvl });
+    const file = new File([gifBlob], 'enik-dusus-seviye-' + lvl + '.gif', { type:'image/gif' });
+    if (navigator.canShare && navigator.canShare({ files:[file] })) {
+      try { await navigator.share({ files:[file], text:shareText() + ' ' + GAME_URL }); } catch (_) {}
+      b.textContent = 'Tekrar Paylaş 🎞️';
+    } else {
+      const a = document.createElement('a'); a.href = url; a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
+      b.textContent = 'GIF indirildi ✔ X\'e yükle';
+    }
+  } catch (err) {
+    b.textContent = 'Olmadı 😿 Tekrar dene';
+  } finally { b.disabled = false; }
+};
 $('share').onclick = async () => {
-  const rk = RANKS[deadRank][0];
-  const text = `Enik Düşüşü'nde Seviye ${lvl}'de "${rk}" oldum 🐾 Eniği cuk diye düşürebilir misin?`;
+  const text = shareText();
   if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', seviye:lvl });
   if (navigator.share) { try { await navigator.share({ text, url:GAME_URL }); } catch (_) {} return; }
   window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(GAME_URL), '_blank', 'noopener');
@@ -449,7 +567,7 @@ let last = performance.now(), acc = 0;
 function loop(now) {
   acc = Math.min(acc + (now - last), 200); last = now;
   while (acc >= STEP) { step(); acc -= STEP; }
-  draw(now);
+  draw(now); recordFrame(now);
   requestAnimationFrame(loop);
 }
 resize(); newGame(); requestAnimationFrame(loop);
