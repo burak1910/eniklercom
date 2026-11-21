@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#1a0d08">
+<meta name="theme-color" content="#5ab4ff">
 <title>Enik Düşüşü – Tam Zamanında Atla! | enikler.com</title>
 <meta name="description" content="Tam zamanında dokun, eniği dikenli deliğe cuk diye düşür! Rezalet'ten Tanrısal'a rütbeni kap, skorunu X'te paylaş.">
 <link rel="canonical" href="https://enikler.com/oyun/enik-dusus/">
@@ -17,35 +17,35 @@
 <meta name="twitter:title" content="Enik Düşüşü 🐾 Cuk diye düşürebilir misin?">
 <meta name="twitter:description" content="Tam zamanında atla, dikenlere değmeden dibe düş. Beni geçebilir misin?">
 <meta name="twitter:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
 <style>
   :root { --accent:#FFB703; --accent-d:#F08C00; --ink:#2B2118; --like:#22B573; --nope:#F0506E; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { margin:0; height:100%; background:#0e0705; overflow:hidden; overscroll-behavior:none; }
-  body { font-family:'Nunito',system-ui,sans-serif; color:#fff; user-select:none; -webkit-user-select:none; touch-action:none; }
+  body { font-family:'Comic Sans MS','Comic Neue','Chalkboard SE',cursive; color:#fff; user-select:none; -webkit-user-select:none; touch-action:none; }
   #wrap { position:fixed; inset:0; max-width:480px; margin:0 auto; }
   canvas { display:block; width:100%; height:100%; }
   .hidden { display:none !important; }
 
   #hud { position:absolute; top:calc(env(safe-area-inset-top) + 10px); left:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-start; pointer-events:none; }
-  #hud .m { font-weight:900; font-size:2.2rem; line-height:1; text-shadow:0 3px 0 rgba(0,0,0,.4); }
+  #hud .m { font-weight:700; font-size:2.2rem; line-height:1; color:#ffee00; text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000; }
   #hud .m small { font-size:1rem; opacity:.8; }
-  #hud .best { font-weight:800; font-size:.85rem; opacity:.75; text-align:right; }
-  #home { pointer-events:auto; display:inline-block; margin-top:6px; color:var(--accent); font-weight:900; font-size:.85rem; text-decoration:none; }
+  #hud .best { font-weight:700; font-size:.9rem; text-align:right; text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000; }
+  #home { pointer-events:auto; display:inline-block; margin-top:6px; color:#fff; font-weight:700; font-size:.85rem; text-decoration:underline; text-shadow:1px 1px 0 #000; }
 
-  #pop { position:absolute; left:0; right:0; top:28%; text-align:center; font-weight:900; font-size:2.4rem; pointer-events:none;
+  #pop { position:absolute; left:0; right:0; top:28%; text-align:center; font:2.8rem Impact,'Arial Black',sans-serif; -webkit-text-stroke:2px #000; transform:rotate(-6deg); pointer-events:none;
          opacity:0; transform:scale(.6); transition:opacity .25s, transform .25s; text-shadow:0 4px 0 rgba(0,0,0,.45); }
   #pop.on { opacity:1; transform:scale(1); }
 
   #over { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(14,7,5,.55); }
   #over.hidden { display:none; }
-  .card { width:100%; max-width:340px; background:#FFF8E7; color:var(--ink); border-radius:28px; padding:24px 20px 20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:in .3s ease-out; }
+  .card { width:100%; max-width:340px; background:#FFF8E7; color:var(--ink); border-radius:28px; padding:24px 20px 20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:in .3s ease-out; transform:rotate(-2deg); border:3px solid #000; }
   @keyframes in { from { transform:translateY(30px) scale(.9); opacity:0; } }
   .card .rank { font-weight:900; font-size:2.3rem; line-height:1.1; margin:2px 0 4px; }
   .card .dep { font-weight:900; font-size:1.2rem; }
   .card .bst { font-weight:800; font-size:.9rem; color:#8a7a66; margin-top:2px; }
   .card .rec { display:inline-block; margin-top:8px; background:var(--nope); color:#fff; font-weight:900; font-size:.8rem; padding:4px 12px; border-radius:99px; }
-  .btn { display:block; width:100%; margin-top:12px; border:0; border-radius:16px; padding:14px; font:900 1.1rem 'Nunito',sans-serif; cursor:pointer; text-decoration:none; }
+  .btn { display:block; width:100%; margin-top:12px; border:0; border-radius:16px; padding:14px; font:700 1.15rem 'Comic Sans MS','Comic Neue',cursive; cursor:pointer; text-decoration:none; }
   .btn.go { background:var(--accent); color:#fff; box-shadow:0 5px 0 var(--accent-d); }
   .btn.sh { background:#111; color:#fff; box-shadow:0 5px 0 #000; }
   .btn:active { transform:translateY(3px); box-shadow:none; }
@@ -90,17 +90,17 @@ const SPIKE = 11;       // diken boyu
 const HIT = ER * 0.8 + SPIKE * 0.5; // merkezden duvara izin verilen en yakın mesafe
 const STEP = 1000 / 60; // sabit fizik adımı (her cihazda aynı zıplama)
 const RANKS = [
-  ['Rezalet',    '#2a0b08', '#ff8a7a'],
-  ['Kötü',       '#3b1209', '#ff9e6b'],
-  ['İdare Eder', '#3d2a08', '#ffc94a'],
-  ['Fena Değil', '#2d3a0a', '#d6f25a'],
-  ['İyi',        '#0e3a1b', '#5cf08a'],
-  ['Harika',     '#0a3a34', '#4ff0d6'],
-  ['Süper',      '#0b2c44', '#5cc8ff'],
-  ['Muhteşem',   '#1b1c4c', '#8f9bff'],
-  ['Kusursuz',   '#301446', '#d88cff'],
-  ['Efsane',     '#44122f', '#ff6ec4'],
-  ['Tanrısal',   '#3d3410', '#ffe14d']
+  ['Rezalet',    '#ff3030', '#ff8a7a'],
+  ['Kötü',       '#ff8a00', '#ff9e6b'],
+  ['İdare Eder', '#ffe000', '#ffc94a'],
+  ['Fena Değil', '#9cff2e', '#d6f25a'],
+  ['İyi',        '#21d65b', '#5cf08a'],
+  ['Harika',     '#18e0c8', '#4ff0d6'],
+  ['Süper',      '#2aa6ff', '#5cc8ff'],
+  ['Muhteşem',   '#5a5aff', '#8f9bff'],
+  ['Kusursuz',   '#b23cff', '#d88cff'],
+  ['Efsane',     '#ff3cb4', '#ff6ec4'],
+  ['Tanrısal',   '#ffd700', '#ffe14d']
 ];
 const BAND = D / (RANKS.length - 1); // ilk 10 rütbe kuyu boyunca, Tanrısal = dibe ulaşmak
 
@@ -132,6 +132,7 @@ const lx = y => LEDGE + (cfg.lb - LEDGE) * Math.min(1, Math.max(0, y) / D);
 const rx = y => TOP_R + (cfg.rb - TOP_R) * Math.min(1, Math.max(0, y) / D);
 
 function startLevel(l) {
+  nextPhoto(); rag = null;
   lvl = l; cfg = makeLevel(l);
   e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0 };
   state = 'ready'; parts = [];
@@ -163,7 +164,8 @@ function die() {
   state = 'dead'; deadAt = performance.now(); shake = 14;
   deadRank = Math.max(0, Math.min(RANKS.length - 2, Math.floor(e.y / BAND)));
   try { navigator.vibrate && navigator.vibrate(70); } catch (_) {}
-  burst(e.x, e.y, 22, ['#f4d9a8', '#f4d9a8', '#c98b4a']);
+  burst(e.x, e.y, 10, ['#ff0000', '#ffee00', '#ffffff']);
+  rag = { x:e.x, y:e.y - 8, vx:(e.x < (lx(e.y) + rx(e.y)) / 2 ? 1 : -1) * (2 + Math.random() * 2), vy:-9, spin:(Math.random() - .5) * .6, t:performance.now(), meme:MEMES[Math.floor(Math.random() * MEMES.length)] };
   const sc = scoreOf(lvl, deadRank), rec = !best || sc > scoreOf(best.l, best.r);
   if (rec) { best = { l:lvl, r:deadRank }; try { localStorage.setItem('enikDususBest2', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
   if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', seviye:lvl, rutbe:RANKS[deadRank][0] });
@@ -220,105 +222,169 @@ function step() {
   camY += (target - camY) * (state === 'ready' ? 0.08 : 0.15);
 }
 
-/* ---------- Çizim ---------- */
+/* ---------- Enik fotoğrafları (arka planı silinmemiş, aynen öyle) ---------- */
+const FONT = "'Comic Sans MS','Comic Neue','Chalkboard SE',cursive";
+const MEMES = ['BRUH', 'EYVAH', 'ÇAT!', 'NOLDU', 'AH BE', 'OF'];
+let photos = [], photo = new Image(), photoOk = false;
+function loadPhoto(src) {
+  const img = new Image();
+  img.onload = () => { photo = img; photoOk = true; };
+  img.onerror = () => { if (!src.endsWith('enik.jpg')) loadPhoto('enik.jpg'); };
+  img.src = src;
+}
+function nextPhoto() {
+  if (photos.length) loadPhoto('/uploads/' + photos[Math.floor(Math.random() * photos.length)]);
+  else loadPhoto('enik.jpg');
+}
+loadPhoto('enik.jpg');
+fetch('/api.php?action=get_all&sort=new', { cache:'no-store' })
+  .then(r => r.json())
+  .then(d => { photos = (d.data || []).map(x => x.image_url).filter(Boolean); if (photos.length) nextPhoto(); })
+  .catch(() => {});
+
+/* ---------- Çizim (bilerek kötü, MS Paint tadında) ---------- */
+const jit = k => { const v = Math.sin(k * 12.9898) * 43758.5453; return v - Math.floor(v); }; // sabit "rastgele"
+
+function wordArt(text, x, y, size, tilt) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(tilt);
+  ctx.font = 'bold ' + size + 'px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const w = ctx.measureText(text).width;
+  const g = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+  ['#ff0000', '#ff9900', '#ffee00', '#33dd00', '#00aaff', '#cc00ff'].forEach((c, i) => g.addColorStop(i / 5, c));
+  ctx.lineWidth = 5; ctx.strokeStyle = '#000'; ctx.lineJoin = 'round'; ctx.strokeText(text, 2, 3);
+  ctx.fillStyle = '#000'; ctx.fillText(text, 3, 4);         // ucuz gölge
+  ctx.strokeText(text, 0, 0); ctx.fillStyle = g; ctx.fillText(text, 0, 0);
+  ctx.restore();
+}
+
 function draw(now) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = '#120806'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = '#5ab4ff'; ctx.fillRect(0, 0, cv.width, cv.height);
   const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
   ctx.setTransform(scale, 0, 0, scale, sx * scale, (sy - camY) * scale);
   const top = camY, bot = camY + viewH;
 
-  // yıldızlar
+  // gökyüzü: çocuk çizimi güneş + bulut
   if (top < 0) {
-    ctx.fillStyle = 'rgba(255,240,200,.35)';
-    for (let k = 0; k < 30; k++) { const x = (k * 97) % W, y = -((k * 53) % 600) - 20; if (y > top) ctx.fillRect(x, y, 2, 2); }
+    ctx.fillStyle = '#5ab4ff'; ctx.fillRect(0, top, W, -top);
+    ctx.strokeStyle = '#ffd400'; ctx.lineWidth = 4;
+    for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 + now / 3000; ctx.beginPath(); ctx.moveTo(300 + Math.cos(a) * 34, -230 + Math.sin(a) * 34); ctx.lineTo(300 + Math.cos(a) * 52, -230 + Math.sin(a) * 52); ctx.stroke(); }
+    ctx.fillStyle = '#ffee00'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(300, -230, 27, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.fillRect(290, -236, 4, 4); ctx.fillRect(305, -236, 4, 4);
+    ctx.beginPath(); ctx.arc(300, -226, 9, .2, Math.PI - .2); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    [[70, -260, 22], [95, -268, 26], [122, -258, 20]].forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x + (now / 80 % 400) - 100, y, r, 0, 7); ctx.fill(); });
   }
 
-  // rütbe bantları
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  // rütbe bantları: göz yakan düz renkler + WordArt yazılar
   for (let z = 0; z < RANKS.length - 1; z++) {
     const y0 = z * BAND; if (y0 > bot || y0 + BAND < top) continue;
-    const rk = RANKS[z];
-    ctx.fillStyle = rk[1]; ctx.fillRect(0, y0, W, BAND);
-    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, y0, W, 3);
+    ctx.fillStyle = RANKS[z][1]; ctx.fillRect(0, y0, W, BAND);
     const ly = y0 + BAND / 2;
-    ctx.font = '900 ' + Math.min(30, (rx(ly) - lx(ly)) / 4) + 'px Nunito, sans-serif';
-    ctx.fillStyle = rk[2]; ctx.globalAlpha = .55;
-    ctx.fillText(rk[0], (lx(ly) + rx(ly)) / 2, ly);
-    ctx.globalAlpha = 1;
+    wordArt(RANKS[z][0], (lx(ly) + rx(ly)) / 2, ly, Math.min(28, (rx(ly) - lx(ly)) / 4), (jit(z) - .5) * .5);
   }
-  // dip: Tanrısal yatağı
+  // dip: Tanrısal minderi
   const gr = RANKS[RANKS.length - 1];
   ctx.fillStyle = gr[1]; ctx.fillRect(0, D, W, 400);
-  ctx.fillStyle = '#c98b4a'; ctx.fillRect(cfg.lb, D, cfg.bw, 10);
-  ctx.fillStyle = '#ff9eb5'; ctx.beginPath(); ctx.ellipse(cfg.cx, D + 2, cfg.bw / 2 - 2, 6, 0, Math.PI, 0); ctx.fill();
-  ctx.font = '900 22px Nunito, sans-serif'; ctx.fillStyle = gr[2];
-  ctx.fillText('Tanrısal', cfg.cx, D + 40);
+  ctx.fillStyle = '#ff4fa3'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+  ctx.fillRect(cfg.lb, D - 4, cfg.bw, 14); ctx.strokeRect(cfg.lb, D - 4, cfg.bw, 14);
+  wordArt('Tanrısal', cfg.cx, D + 46, 26, -.12);
 
-  // kaya duvarları
-  ctx.fillStyle = 'rgba(20,8,5,.88)';
-  ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + 400); ctx.lineTo(0, D + 400); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + 400); ctx.lineTo(W, D + 400); ctx.fill();
+  // duvarlar: düz kahverengi + kalın siyah kontur
+  ctx.fillStyle = '#9b5a2b'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + 400); ctx.lineTo(0, D + 400); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + 400); ctx.lineTo(W, D + 400); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // duvara Paint "kaya" lekeleri
+  ctx.fillStyle = '#7a4520';
+  for (let k = 0; k < 40; k++) {
+    const y = k * (D / 40) + 20; if (y < top - 20 || y > bot + 20) continue;
+    ctx.beginPath(); ctx.arc(lx(y) * jit(k) * .8 + 8, y, 6 + jit(k + 9) * 6, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(rx(y) + (W - rx(y)) * (.2 + jit(k + 3) * .6), y + 30, 5 + jit(k + 5) * 7, 0, 7); ctx.fill();
+  }
 
-  // duvar kenarı + dikenler
-  for (const [x0, y0, x1, y1, side] of [[LEDGE, 0, cfg.lb, D, 1], [TOP_R, 0, cfg.rb, D, -1]]) {
-    ctx.strokeStyle = '#c98b4a'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  // dikenler: elle çizilmiş gibi, hepsi farklı boy
+  for (const [x0, y0, x1, y1, side, seed] of [[LEDGE, 0, cfg.lb, D, 1, 1], [TOP_R, 0, cfg.rb, D, -1, 7]]) {
     const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
     const nx = uy * side, ny = -ux * side, n = Math.floor(len / 14);
-    ctx.fillStyle = '#9b6bff'; ctx.strokeStyle = '#e9ddff'; ctx.lineWidth = 1.2;
+    ctx.fillStyle = '#d9d9d9'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.6;
     const k0 = Math.max(0, Math.floor((top - y0 - 20) / (y1 - y0) * n)), k1 = Math.min(n, Math.ceil((bot - y0 + 20) / (y1 - y0) * n));
     for (let k = k0; k < k1; k++) {
-      const a = k / n, b = (k + 1) / n, m = (a + b) / 2;
+      const a = k / n, b = (k + 1) / n, m = (a + b) / 2 + (jit(k + seed) - .5) * .02, h = SPIKE * (.7 + jit(k * 3 + seed) * .7);
       ctx.beginPath();
       ctx.moveTo(x0 + (x1 - x0) * a, y0 + (y1 - y0) * a);
-      ctx.lineTo(x0 + (x1 - x0) * m + nx * SPIKE, y0 + (y1 - y0) * m + ny * SPIKE);
+      ctx.lineTo(x0 + (x1 - x0) * m + nx * h, y0 + (y1 - y0) * m + ny * h);
       ctx.lineTo(x0 + (x1 - x0) * b, y0 + (y1 - y0) * b);
       ctx.closePath(); ctx.fill(); ctx.stroke();
     }
   }
 
-  // platform
-  ctx.fillStyle = '#FFF4D6'; ctx.fillRect(0, -1, LEDGE, 7);
-  ctx.fillRect(TOP_R, -1, W - TOP_R, 7);
+  // platform: yeşil Paint çimeni
+  ctx.fillStyle = '#3ad13a'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+  ctx.fillRect(0, -2, LEDGE, 9); ctx.strokeRect(-3, -2, LEDGE + 3, 9);
+  ctx.fillRect(TOP_R, -2, W - TOP_R, 9); ctx.strokeRect(TOP_R, -2, W - TOP_R + 3, 9);
 
-  // enik
-  if (state !== 'dead') drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : 1, e.rot, now);
+  // enik fotoğrafı
+  if (state === 'dead') drawRagdoll(now);
+  else drawEnik(e.x, e.y - (state === 'ready' ? ER : 0), state === 'ready' ? e.dir : 1, e.rot, now);
 
-  // parçacıklar
-  parts.forEach(p => { ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, 7); ctx.fill(); });
+  // parçacıklar (kare, çünkü Paint)
+  parts.forEach(p => { ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c; ctx.fillRect(p.x - 3, p.y - 3, 6, 6); });
   ctx.globalAlpha = 1;
 
   // ipucu
   if (state === 'ready') {
-    const bob = Math.sin(now / 250) * 3;
-    ctx.font = '900 20px Nunito, sans-serif'; ctx.fillStyle = '#FFB703';
-    ctx.fillText(lvl === 1 ? 'Tam zamanında dokun!' : 'Seviye ' + lvl, W / 2, -150 + bob);
-    ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = 'rgba(255,244,214,.8)';
-    ctx.fillText(lvl === 1 ? 'Eniği deliğe cuk diye düşür 🐾' : 'Delik daraldı, enik hızlandı!', W / 2, -124 + bob);
+    const bob = Math.floor(now / 400) % 2 * 4; // akıcı değil, bilerek kesik kesik
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = 'bold 21px ' + FONT; ctx.lineWidth = 4; ctx.strokeStyle = '#000'; ctx.fillStyle = '#ffee00';
+    const t1 = lvl === 1 ? 'Tam zamanında dokun!!1' : 'Seviye ' + lvl + ' !!';
+    ctx.strokeText(t1, W / 2, -150 + bob); ctx.fillText(t1, W / 2, -150 + bob);
+    ctx.font = 'bold 14px ' + FONT; ctx.fillStyle = '#fff'; ctx.lineWidth = 3;
+    const t2 = lvl === 1 ? 'eniği deliğe cuk diye düşür' : 'delik daraldı enik hızlandı';
+    ctx.strokeText(t2, W / 2, -124 + bob); ctx.fillText(t2, W / 2, -124 + bob);
   }
+
+  // stok fotoğraf filigranı
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.save(); ctx.translate(cv.width / 2, cv.height * .62); ctx.rotate(-.5);
+  ctx.font = 'bold ' + Math.round(34 * scale) + 'px ' + FONT; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fillText('enikler.com', 0, 0); ctx.fillText('ÖNİZLEME', 0, 46 * scale);
+  ctx.restore();
+}
+
+// fotoğrafı kare kare, arka planıyla, kaskatı çiz
+function photoBox(x, y, rot, flip) {
+  const h = 54, w = photoOk ? Math.min(54, h * photo.width / photo.height) : 40;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(flip, 1);
+  ctx.fillStyle = '#fff'; ctx.fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4); // yamuk beyaz çerçeve
+  if (photoOk) ctx.drawImage(photo, -w / 2, -h / 2, w, h);
+  else { ctx.fillStyle = '#ccc'; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.fillStyle = '#000'; ctx.font = 'bold 9px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('yükleniyo', 0, 3); }
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.strokeRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
+  ctx.restore();
 }
 
 function drawEnik(x, y, dir, rot, now) {
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(dir, 1);
-  const fall = state === 'air', leg = state === 'ready' ? Math.sin(e.walk) * 3 : 0;
-  ctx.strokeStyle = '#d9a066'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-11, 2); ctx.quadraticCurveTo(-20, -6 + Math.sin(now / 90) * 4, -17, -13); ctx.stroke();
-  ctx.strokeStyle = '#e8b97f'; ctx.lineWidth = 4.5;
-  ctx.beginPath();
-  ctx.moveTo(-6, 7); ctx.lineTo(-6 + leg, fall ? 11 : 13);
-  ctx.moveTo(6, 7); ctx.lineTo(6 - leg, fall ? 11 : 13); ctx.stroke();
-  ctx.fillStyle = '#f4d9a8'; ctx.beginPath(); ctx.ellipse(-1, 3, 12, 9, 0, 0, 7); ctx.fill();
-  ctx.beginPath(); ctx.arc(7, -6, 10, 0, 7); ctx.fill();
-  ctx.fillStyle = '#c98b4a';
-  ctx.beginPath(); ctx.ellipse(0, -9, 4, 8, fall ? -1.2 : 0.35, 0, 7); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(13, -11, 3.5, 7, fall ? 1.1 : -0.25, 0, 7); ctx.fill();
-  ctx.fillStyle = '#2B2118';
-  if (fall) { ctx.beginPath(); ctx.arc(10, -8, 2.6, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(10.8, -8.8, .9, 0, 7); ctx.fill(); }
-  else { ctx.beginPath(); ctx.arc(10, -8, 1.9, 0, 7); ctx.fill(); }
-  ctx.fillStyle = '#2B2118'; ctx.beginPath(); ctx.arc(16.5, -4.5, 2.2, 0, 7); ctx.fill();
-  if (fall) { ctx.beginPath(); ctx.arc(13, -0.5, 1.8, 0, 7); ctx.fill(); }
-  ctx.fillStyle = 'rgba(240,80,110,.35)'; ctx.beginPath(); ctx.arc(7, -2, 2.5, 0, 7); ctx.fill();
+  if (state === 'ready') {
+    const stepPose = Math.floor(e.walk / 1.6) % 2;       // 2 kareli "animasyon"
+    photoBox(x, y - 10 - stepPose * 4, stepPose ? .14 : -.14, dir);
+  } else if (state === 'air') {
+    photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1);  // düşerken yavaşça döner
+  } else {
+    photoBox(x, y - 8, 0, 1);
+  }
+}
+
+// ölünce fotoğraf fırlayıp dönerek uçar
+let rag = null;
+function drawRagdoll(now) {
+  if (!rag) return;
+  const t = (now - rag.t) / 16.667;
+  photoBox(rag.x + rag.vx * t, rag.y + rag.vy * t + .25 * t * t, rag.spin * t, 1);
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const s = Math.min(1, t / 8);
+  ctx.font = 'bold ' + Math.round(64 * scale * (.6 + .4 * s)) + 'px Impact, "Arial Black", sans-serif';
+  ctx.textAlign = 'center'; ctx.lineWidth = 6 * scale / 2; ctx.strokeStyle = '#000'; ctx.fillStyle = '#fff';
+  ctx.strokeText(rag.meme, cv.width / 2, cv.height * .22); ctx.fillText(rag.meme, cv.width / 2, cv.height * .22);
   ctx.restore();
 }
 
