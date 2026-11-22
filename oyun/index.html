@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CCZH5RWPMD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CCZH5RWPMD');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF4D6">
+<title>Oyunlar | enikler.com</title>
+<meta name="description" content="enikler.com oyunları: Enik Düşüşü ve daha fazlası. Tarayıcıda, indirmeden oyna.">
+<link rel="canonical" href="https://enikler.com/oyun/">
+<meta property="og:site_name" content="enikler.com">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://enikler.com/oyun/">
+<meta property="og:title" content="Enik Oyunları 🎮">
+<meta property="og:description" content="Tarayıcıda, indirmeden oyna. Eniği deliğe cuk diye düşürebilir misin?">
+<meta property="og:image" content="https://enikler.com/oyun/enik-dusus/kapak.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ana sayfayla aynı renkler ve kart tarzı */
+  :root {
+    --accent:#FFB703; --accent-d:#F08C00; --ink:#2B2118; --muted:#8a7a66; --soft:#b8a688;
+    --line:#F3E3B8; --new:#F0506E; --shadow:0 8px 20px rgba(120,80,20,.14);
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    margin:0; min-height:100dvh; font-family:'Nunito',system-ui,sans-serif; color:var(--ink);
+    background:
+      radial-gradient(60vmax 60vmax at 0% 0%, #FFE9A8 0%, transparent 60%),
+      radial-gradient(50vmax 50vmax at 100% 100%, #FFD3C2 0%, transparent 60%),
+      #FFF8E7;
+    background-attachment:fixed;
+    padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 32px);
+  }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+  main { width:100%; max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+
+  .back { align-self:flex-start; display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:var(--muted); font-weight:800; font-size:.95rem; padding:6px 2px; }
+  .back:hover { color:var(--accent-d); }
+
+  header { text-align:center; padding:4px 0 6px; }
+  h1 { margin:0; font-size:clamp(2.4rem,8.5vw,3.3rem); font-weight:900; letter-spacing:-.5px; color:var(--accent-d); line-height:1.1; }
+  h1 span { color:var(--ink); }
+  header p { margin:6px 0 0; font-size:1.1rem; font-weight:700; color:var(--muted); }
+
+  #games { display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:620px) { #games { grid-template-columns:1fr 1fr; } }
+
+  .game {
+    position:relative; display:flex; flex-direction:column; text-decoration:none; color:var(--ink);
+    background:#fff; border:2px solid var(--line); border-radius:28px; overflow:hidden;
+    box-shadow:var(--shadow); transition:transform .15s, border-color .15s;
+  }
+  .game:active { transform:scale(.97); }
+  @media (hover:hover) { a.game:hover { transform:translateY(-3px); border-color:var(--accent); } }
+  .game .cover { display:block; width:100%; height:auto; aspect-ratio:1200/630; object-fit:cover; background:#5ab4ff; border-bottom:2px solid var(--line); }
+  .game .body { display:flex; flex-direction:column; gap:6px; padding:18px 22px 22px; flex:1; }
+  .game b { font-weight:900; font-size:1.5rem; line-height:1.15; }
+  .game .desc { font-weight:700; font-size:1rem; color:var(--muted); line-height:1.35; }
+  .game .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .game .meta i { font-style:normal; font-weight:800; font-size:.78rem; color:var(--ink); background:#FFF4D6; border:2px solid var(--line); border-radius:99px; padding:3px 10px; }
+  .game .best { font-weight:800; font-size:.88rem; color:var(--accent-d); min-height:1.2em; }
+  .game .play {
+    margin-top:auto; align-self:stretch; text-align:center; border-radius:16px; padding:12px; background:var(--accent);
+    color:#fff; font-weight:900; font-size:1.1rem; box-shadow:0 5px 0 var(--accent-d);
+  }
+  .badge {
+    position:absolute; top:12px; right:12px; background:var(--new); color:#fff; font-weight:900; font-size:.72rem;
+    padding:3px 10px; border-radius:99px; box-shadow:0 4px 10px rgba(240,80,110,.35);
+  }
+
+  .game.soon { background:rgba(255,255,255,.55); border-style:dashed; box-shadow:none; align-items:center; justify-content:center; text-align:center; min-height:220px; }
+  .game.soon .ti { font-size:3.4rem; line-height:1; margin-bottom:6px; }
+  .game.soon b { font-size:1.3rem; }
+  .game.soon .desc { padding:0 22px; }
+
+  footer { text-align:center; font-size:.78rem; font-weight:700; color:var(--soft); }
+  @media (prefers-reduced-motion:reduce) { .game { transition:none; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← enikler.com</a>
+
+  <header>
+    <h1>Oyun<span>lar</span></h1>
+    <p>İndirmek yok, tarayıcıda oyna 🎮</p>
+  </header>
+
+  <section id="games" aria-label="Oyunlar">
+    <a class="game" href="/oyun/enik-dusus/">
+      <img class="cover" src="/oyun/enik-dusus/kapak.jpg" alt="Enik Düşüşü oyunundan bir görüntü" width="1200" height="630">
+      <i class="badge" style="font-style:normal">YENİ</i>
+      <div class="body">
+        <b>Enik Düşüşü</b>
+        <span class="desc">Tam zamanında dokun, eniği dikenlere değmeden deliğe cuk diye düşür. Her seviyede yeni bir engel!</span>
+        <div class="meta"><i>👆 Tek dokunuş</i><i>📱 Telefona uygun</i><i>🎞️ GIF paylaş</i></div>
+        <span class="best" id="bestDusus"></span>
+        <span class="play">Oyna ▶</span>
+      </div>
+    </a>
+
+    <div class="game soon" aria-label="Yakında yeni oyunlar">
+      <div class="ti">🎲</div>
+      <b>Yeni oyunlar yolda</b>
+      <span class="desc">Ne oynamak istersin? Ana sayfadaki fikir kutusuna yaz.</span>
+    </div>
+  </section>
+
+  <footer>enikler.com 🐾</footer>
+</main>
+
+<script>
+// Oyuncunun bu cihazdaki en iyi skoru (oyunla aynı kayıt)
+try {
+  const RANKS = ['Rezalet', 'Kötü', 'İdare Eder', 'Fena Değil', 'İyi', 'Harika', 'Süper', 'Muhteşem', 'Kusursuz', 'Efsane', 'Tanrısal'];
+  const b = JSON.parse(localStorage.getItem('enikDususBest3'));
+  if (b && b.l && RANKS[b.r]) document.getElementById('bestDusus').textContent = '🏆 En iyin: Seviye ' + b.l + ' · ' + RANKS[b.r];
+} catch (_) {}
+</script>
+</body>
+</html>

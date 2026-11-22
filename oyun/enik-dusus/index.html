@@ -35,7 +35,7 @@
   #snd { pointer-events:auto; background:none; border:0; font-size:1.3rem; line-height:1; padding:0; margin-top:4px; cursor:pointer; filter:drop-shadow(1px 1px 0 #000); }
   #home { pointer-events:auto; display:inline-block; margin-top:6px; color:#fff; font-weight:700; font-size:.85rem; text-decoration:underline; text-shadow:1px 1px 0 #000; }
 
-  #pop { position:absolute; left:0; right:0; top:28%; text-align:center; font:2.8rem Impact,'Arial Black',sans-serif; -webkit-text-stroke:2px #000; transform:rotate(-6deg); pointer-events:none;
+  #pop { position:absolute; left:0; right:0; top:28%; text-align:center; white-space:pre-line; line-height:1.15; padding:0 12px; font:2.8rem Impact,'Arial Black',sans-serif; -webkit-text-stroke:2px #000; transform:rotate(-6deg); pointer-events:none;
          opacity:0; transform:scale(.6); transition:opacity .25s, transform .25s; text-shadow:0 4px 0 rgba(0,0,0,.45); }
   #pop.on { opacity:1; transform:scale(1); }
 
@@ -50,9 +50,47 @@
   .btn { display:block; width:100%; margin-top:12px; border:0; border-radius:16px; padding:14px; font:700 1.15rem 'Comic Sans MS','Comic Neue',cursive; cursor:pointer; text-decoration:none; }
   .btn.go { background:var(--accent); color:#fff; box-shadow:0 5px 0 var(--accent-d); }
   .btn.sh { background:#111; color:#fff; box-shadow:0 5px 0 #000; }
+  .btn.alt { background:#fff; color:var(--ink); box-shadow:0 5px 0 #d8cbb0; border:2px solid #e6d9bc; padding:12px; }
   .btn.gif { background:#ff3cb4; color:#fff; box-shadow:0 5px 0 #b3157a; }
   .btn:disabled { opacity:.7; }
-  #gifPrev { display:block; margin:12px auto 0; max-height:170px; border:3px solid #000; transform:rotate(1.5deg); }
+  #gifPrev { display:block; margin:14px auto 0; width:170px; height:170px; border:3px solid #000; transform:rotate(1.5deg); background:#5ab4ff; }
+  .tip a { color:var(--ink); font-weight:900; white-space:nowrap; }
+  .tip { margin-top:10px; padding:10px 12px; background:#FFF1D6; border:2px dashed var(--accent-d); border-radius:14px; font-weight:700; font-size:.85rem; line-height:1.35; text-align:left; }
+  .tip.hidden { display:none; }
+  .hbtn { pointer-events:auto; background:none; border:0; font-size:1.3rem; line-height:1; padding:0; margin-top:4px; cursor:pointer; filter:drop-shadow(1px 1px 0 #000); }
+
+  /* liderlik bölümü (oyun sonu kartında) */
+  .lider { margin-top:14px; padding:12px; background:#fff; border:2px solid #000; border-radius:16px; text-align:left; }
+  .lgt { font-weight:900; font-size:.95rem; margin-bottom:8px; }
+  .lgrow { display:flex; align-items:center; gap:6px; }
+  .lgrow span { font-weight:900; font-size:1.1rem; }
+  .lgrow input { flex:1; min-width:0; padding:9px 10px; border:2px solid #000; border-radius:10px; font:700 1rem 'Comic Sans MS','Comic Neue',cursive; }
+  .lgrow button, #lgSee { border:0; border-radius:10px; padding:10px 14px; background:var(--accent); color:#fff; font:700 .95rem 'Comic Sans MS','Comic Neue',cursive; cursor:pointer; box-shadow:0 3px 0 var(--accent-d); }
+  .lgmsg { font-weight:700; font-size:.8rem; color:#8a7a66; margin-top:6px; min-height:1em; }
+  .lgmsg.bad { color:#d62828; }
+  #lgMe { display:flex; align-items:center; gap:10px; }
+  #lgMe.hidden { display:none; }
+  #lgPp, #bList img, #bList .noav { width:40px; height:40px; border-radius:50%; border:2px solid #000; object-fit:cover; flex:none; background:#FFE9A8; }
+  .lgme { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lgme b { font-size:1rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lgme small { font-weight:700; font-size:.8rem; color:#8a7a66; }
+  .lgme small a { color:#8a7a66; }
+
+  /* liderlik tablosu penceresi */
+  #board { position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(14,7,5,.6); }
+  #board.hidden { display:none; }
+  .bcard { position:relative; width:100%; max-width:360px; max-height:100%; overflow:auto; background:#FFF8E7; color:var(--ink); border:3px solid #000; border-radius:24px; padding:18px 14px 14px; box-shadow:0 20px 40px rgba(0,0,0,.4); }
+  .bcard h3 { margin:0 0 10px; text-align:center; font-size:1.35rem; }
+  .bx { position:absolute; top:8px; right:10px; width:36px; height:36px; border-radius:50%; border:2px solid #000; background:#fff; font:900 1.3rem/1 sans-serif; cursor:pointer; }
+  #bList { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+  #bList li { display:flex; align-items:center; gap:10px; padding:6px 8px; background:#fff; border:2px solid #F3E3B8; border-radius:14px; }
+  #bList li.me { border-color:var(--accent); background:#FFF1D6; }
+  #bList .no { width:26px; text-align:center; font-weight:900; font-size:1.05rem; flex:none; }
+  #bList .noav { display:grid; place-items:center; font-weight:900; color:#8a5a00; }
+  #bList .nm { flex:1; min-width:0; display:flex; flex-direction:column; }
+  #bList .nm a { font-weight:900; color:var(--ink); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #bList .nm small { font-weight:700; font-size:.8rem; color:#8a7a66; }
+  .bfoot { text-align:center; font-weight:700; font-size:.82rem; color:#8a7a66; margin-top:10px; }
   .btn:active { transform:translateY(3px); box-shadow:none; }
   .card a.site { display:block; margin-top:14px; font-weight:800; font-size:.85rem; color:#8a7a66; text-decoration:none; }
 </style>
@@ -62,9 +100,19 @@
   <canvas id="c" aria-label="Enik Düşüşü oyunu"></canvas>
   <div id="hud">
     <div><div class="m"><small>Seviye </small><span id="lv">1</span></div><div id="pw"></div><a id="home" href="/">← enikler.com</a></div>
-    <div class="best">En iyi<br><span id="bm">–</span><br><button id="snd" type="button" aria-label="Ses aç/kapat">🔊</button></div>
+    <div class="best">En iyi<br><span id="bm">–</span><br><button id="lbBtn" class="hbtn" type="button" aria-label="Liderlik tablosu">🏆</button> <button id="snd" class="hbtn" type="button" aria-label="Ses aç/kapat">🔊</button></div>
   </div>
   <div id="pop"></div>
+
+  <!-- liderlik tablosu penceresi -->
+  <div id="board" class="hidden" role="dialog" aria-modal="true" aria-label="Liderlik tablosu">
+    <div class="bcard">
+      <button class="bx" id="bX" type="button" aria-label="Kapat">×</button>
+      <h3>🏆 Liderlik Tablosu</h3>
+      <ol id="bList"></ol>
+      <div class="bfoot" id="bFoot">Yükleniyor…</div>
+    </div>
+  </div>
   <div id="over" class="hidden">
     <div class="card">
       <div style="font-size:3rem">🐾</div>
@@ -72,10 +120,26 @@
       <div class="dep">Seviye <span id="oLv">1</span></div>
       <div class="bst">En iyin: <span id="oBest">–</span></div>
       <div id="oRec" class="rec hidden">YENİ REKOR!</div>
+      <button class="btn go hidden" id="cont" type="button">🚩 Kayıttan devam</button>
       <button class="btn go" id="again" type="button">Tekrar Dene</button>
+
+      <!-- liderlik: X kullanıcı adıyla gir, profil fotoğrafı tabloda görünsün -->
+      <div class="lider">
+        <div id="lgForm" class="hidden">
+          <div class="lgt">🏆 Liderlik tablosuna gir</div>
+          <div class="lgrow"><span>@</span><input id="lgNick" maxlength="16" placeholder="X kullanıcı adın" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="go"><button id="lgSave" type="button">Gir</button></div>
+          <div class="lgmsg" id="lgMsg"></div>
+        </div>
+        <div id="lgMe" class="hidden">
+          <img id="lgPp" alt="">
+          <span class="lgme"><b id="lgName"></b><small id="lgRank"></small></span>
+          <button id="lgSee" type="button">Tablo</button>
+        </div>
+      </div>
+
       <img id="gifPrev" class="hidden" alt="Son denemenin GIF'i">
-      <button class="btn gif" id="gif" type="button">GIF Olarak Paylaş 🎞️</button>
-      <button class="btn sh" id="share" type="button">Skorunu Paylaş 𝕏</button>
+      <button class="btn sh" id="share" type="button">GIF'i İndir ⬇️</button>
+      <div class="tip hidden" id="shareTip">📥 <b>GIF indirildi!</b> X'te paylaşmak için gönderi yazarken 🖼️ resim simgesine basıp GIF'i seç, gönderide oynayarak görünür. <a id="xOpen" href="#" target="_blank" rel="noopener">X'i aç ↗</a></div>
       <a class="site" href="/">Diğer enik testleri için enikler.com 🐾</a>
     </div>
   </div>
@@ -115,9 +179,10 @@ const RANKS = [
 let ROCK_P = D + 240;    // kaya yağmurunun döngü uzunluğu
 const BAND = 1600 / (RANKS.length - 1); // her rütbe bandı 160 birim; Tanrısal = dibe ulaşmak
 let NB = RANKS.length - 1;              // bu seviyede kuyuda kaç rütbe bandı var
-// ilk seviyede kuyu "İdare Eder"de biter (3 bant), her seviye bir bant uzar, 8. seviyede Efsane'ye kadar (10 bant)
+// kuyu yavaş uzar (delik de aynı hızda daralır): ilk seviyede "İdare Eder"de biter (3 bant), her 3 seviyede
+// bir bant eklenir, 22. seviyede Efsane'ye kadar (10 bant). Böylece oyuncu önce engelleri (6-16. seviye) öğrenir.
 function setDepth(l) {
-  NB = Math.min(RANKS.length - 1, 2 + l);
+  NB = Math.min(RANKS.length - 1, 3 + Math.floor((l - 1) / 3));
   D = NB * BAND; ROAD = D + 170; ROCK_P = D + 240;
 }
 
@@ -134,6 +199,19 @@ const MODS = {
 // ilk 5 seviyede hiç engel yok; 6'dan itibaren birer birer gelir (rüzgar 9., kayan delik 10.)
 const MOD_PLAN = [[], [], [], [], [], ['hiz'], ['sarhos'], ['nefes'], ['ruzgar'], ['kayan'], ['sarhos', 'ruzgar'], ['ruzgar', 'kayan'],
                   ['sarhos', 'kayan'], ['hiz', 'kayan'], ['bora'], ['kaya'], ['kaya', 'ruzgar'], ['nefes', 'bora'], ['kaya', 'kayan'], ['kaya', 'sarhos'], ['nefes', 'kaya']];
+
+/* Her 5 seviyede dünya değişir (sırayla döner); dünyanın ilk seviyesi (6, 11, 16...) aynı zamanda kayıt noktasıdır */
+const WORLDS = [
+  { ad:'Gündüz', ic:'☀️', sky:'#5ab4ff', street:'#ffc266', wall:'#9b5a2b', grass:'#3ad13a', tones:['#8d5127', '#a6663a', '#844a22', '#a05f33'] },
+  { ad:'Gece',   ic:'🌙', sky:'#1d2657', street:'#2b2f6e', wall:'#6e4220', grass:'#2a8a3a', tones:['#5f3818', '#7a4a26', '#573214', '#6c3f1c'] },
+  { ad:'Kar',    ic:'❄️', sky:'#b9d6f0', street:'#dbe7f3', wall:'#8f6a52', grass:'#f4f8ff', tones:['#9c7a62', '#b08f78', '#86634c', '#a3826b'] },
+  { ad:'Uzay',   ic:'🪐', sky:'#140c33', street:'#1d1240', wall:'#5c5670', grass:'#9aa0b5', tones:['#4d4860', '#6a6482', '#433e55', '#5f5975'] }
+];
+const worldOf = l => WORLDS[Math.floor((l - 1) / 5) % WORLDS.length];
+const isCheckpoint = l => l > 1 && (l - 1) % 5 === 0;
+const fromLvl = l => l + (l % 10 === 1 ? "'den" : "'dan");       // 11'den, 16'dan, 21'den...
+let wld = WORLDS[0], checkpoint = 1, runFromStart = true;     // runFromStart: rekor sadece 1. seviyeden başlanan oyunda sayılır
+try { checkpoint = Math.max(1, parseInt(localStorage.getItem('enikDususBayrak')) || 1); } catch (_) {}
 
 /* ---------- Durum ---------- */
 let scale = 1, viewH = 600, dpr = 1, tick = 0;
@@ -199,19 +277,34 @@ const walkSpeed = () => cfg.speed * (cfg.sarhos ? 0.35 + 1.3 * (0.5 + 0.5 * Math
 
 function startLevel(l) {
   nextPhoto(); rag = null;
-  lvl = l; setDepth(l); cfg = makeLevel(l);
+  lvl = l; setDepth(l); cfg = makeLevel(l); wld = worldOf(l);
   e = { x:30, y:0, vx:0, vy:0, dir:1, walk:0, rot:0, sq:0 };
   state = 'ready'; parts = []; trail = [];
   pickStreetEvent();                   // her seviyede aşağıdaki sokakta başka bir olay
   $('lv').textContent = lvl; hud();
   recReset();
-  if (cfg.mods.length) pop(cfg.mods.map(m => MODS[m]).join(' + '), '#fff');
+  const msg = [];
+  if (isCheckpoint(l)) {               // yeni dünya + kayıt noktası
+    msg.push(wld.ic + ' ' + wld.ad + ' Dünyası');
+    if (l > checkpoint) { checkpoint = l; try { localStorage.setItem('enikDususBayrak', String(l)); } catch (_) {} msg.push('🚩 Kayıt alındı!'); }
+  }
+  if (cfg.mods.length) msg.push(cfg.mods.map(m => MODS[m]).join(' + '));
+  if (msg.length) pop(msg.join('\n'), '#fff');
 }
 function newGame() {
   lives = 0; lifeTakenLvl = 0;
-  startLevel(parseInt(new URLSearchParams(location.search).get('sv')) || 1); camY = -viewH * 0.45; shake = 0;
+  const sv = parseInt(new URLSearchParams(location.search).get('sv')) || 1;
+  runFromStart = sv === 1;
+  startLevel(sv); camY = -viewH * 0.45; shake = 0;
   $('over').classList.add('hidden');
   gifReset();
+}
+function continueGame() {             // son kayıt noktasından devam
+  lives = 0; lifeTakenLvl = 0; runFromStart = false;
+  startLevel(checkpoint); camY = -viewH * 0.45; shake = 0;
+  $('over').classList.add('hidden');
+  gifReset();
+  if (typeof gtag === 'function') gtag('event', 'kayittan_devam', { oyun:'enik_dusus', seviye:checkpoint });
 }
 
 function jump() {
@@ -249,7 +342,7 @@ function die() {
     return;
   }
   recEnd();
-  const sc = scoreOf(lvl, deadRank), rec = !best || sc > scoreOf(best.l, best.r);
+  const sc = scoreOf(lvl, deadRank), rec = runFromStart && (!best || sc > scoreOf(best.l, best.r));
   if (rec) { best = { l:lvl, r:deadRank }; try { localStorage.setItem('enikDususBest3', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
   if (typeof gtag === 'function') gtag('event', 'oyun_bitti', { oyun:'enik_dusus', seviye:lvl, rutbe:RANKS[deadRank][0] });
   setTimeout(() => {
@@ -258,7 +351,13 @@ function die() {
     $('oRank').textContent = rk[0]; $('oRank').style.color = shade(rk[2]);
     $('oLv').textContent = lvl; $('oBest').textContent = fmt(best);
     $('oRec').classList.toggle('hidden', !rec);
+    const hasCp = checkpoint > 1;        // kayıt varsa: "devam" öne çıkar, "tekrar dene" baştan başlatır
+    $('cont').classList.toggle('hidden', !hasCp);
+    $('cont').textContent = '🚩 Seviye ' + fromLvl(checkpoint) + ' devam';
+    $('again').textContent = hasCp ? 'Baştan Başla' : 'Tekrar Dene';
+    $('again').className = 'btn ' + (hasCp ? 'alt' : 'go');
     $('over').classList.remove('hidden');
+    onGameOver();                          // liderlik: skoru gönder / sırayı göster
   }, 750);
   prepGif();
 }
@@ -278,7 +377,7 @@ function win() {
   try { navigator.vibrate && navigator.vibrate([30, 40, 30]); } catch (_) {}
   recEnd();
   const r = RANKS.length - 1;
-  if (!best || scoreOf(lvl, r) > scoreOf(best.l, best.r)) { best = { l:lvl, r }; try { localStorage.setItem('enikDususBest3', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
+  if (runFromStart && (!best || scoreOf(lvl, r) > scoreOf(best.l, best.r))) { best = { l:lvl, r }; try { localStorage.setItem('enikDususBest3', JSON.stringify(best)); } catch (_) {} $('bm').textContent = fmt(best); }
   if (typeof gtag === 'function') gtag('event', 'seviye_gecti', { oyun:'enik_dusus', seviye:lvl });
 }
 
@@ -336,20 +435,27 @@ function step() {
 }
 
 /* ---------- GIF kaydı: son denemeyi küçük karelerle sakla ---------- */
-const GW = 240, GIF_MS = 100, PRE = 8, MAX_FRAMES = 70, TAIL = 13;
+const GW = 280, GBAR = 44, GIF_MS = 100, PRE = 8, MAX_FRAMES = 70, TAIL = 13;   // GIF kare: GW×GW
 const gcv = document.createElement('canvas'), gctx = gcv.getContext('2d', { willReadFrequently:true });
 let rec = { mode:'pre', pre:[], frames:[], tail:0 }, lastGrab = 0, lastRun = null, gifBlob = null;
 function recReset() { if (rec.mode !== 'tail') { rec.mode = 'pre'; rec.pre = []; } }
 function recStart() { rec.frames = rec.pre.slice(); rec.mode = 'run'; }
 function recEnd() { rec.mode = 'tail'; rec.tail = TAIL; rec.runLvl = lvl; }
 function grab() {
-  const gh = Math.round(GW * cv.height / cv.width);
-  if (gcv.width !== GW || gcv.height !== gh) { gcv.width = GW; gcv.height = gh; }
-  gctx.drawImage(cv, 0, 0, GW, gh);
-  gctx.fillStyle = '#000'; gctx.fillRect(0, 0, GW, 18);
-  gctx.fillStyle = '#ffee00'; gctx.font = 'bold 12px ' + FONT; gctx.textAlign = 'center'; gctx.textBaseline = 'middle';
-  gctx.fillText('enikler.com · Enik Düşüşü · Seviye ' + lvl, GW / 2, 9);
-  return gctx.getImageData(0, 0, GW, gh);
+  if (gcv.width !== GW || gcv.height !== GW) { gcv.width = GW; gcv.height = GW; }
+  // ekrandan kare bir kesit al: eniği ortalayarak (dikey ekranda yukarı-aşağı kayar)
+  const s = Math.min(cv.width, cv.height), ey = (e.y - 8 - camY) * scale;
+  const sx = (cv.width - s) / 2, sy = Math.max(0, Math.min(cv.height - s, ey - s * .55));
+  gctx.drawImage(cv, sx, sy, s, s, 0, 0, GW, GW);
+  // üst şerit: büyük seviye yazısı + site adı
+  gctx.fillStyle = 'rgba(0,0,0,.85)'; gctx.fillRect(0, 0, GW, GBAR);
+  gctx.textBaseline = 'middle'; gctx.lineJoin = 'round';
+  gctx.textAlign = 'left'; gctx.font = 'bold 27px ' + FONT; gctx.lineWidth = 5; gctx.strokeStyle = '#000'; gctx.fillStyle = '#ffee00';
+  gctx.strokeText('SEVİYE ' + lvl, 10, GBAR / 2 + 1); gctx.fillText('SEVİYE ' + lvl, 10, GBAR / 2 + 1);
+  gctx.textAlign = 'right'; gctx.font = 'bold 12px ' + FONT;
+  gctx.fillStyle = '#fff'; gctx.fillText('enikler.com', GW - 9, GBAR / 2 - 7);
+  gctx.fillStyle = '#ffb703'; gctx.fillText('Enik Düşüşü', GW - 9, GBAR / 2 + 9);
+  return gctx.getImageData(0, 0, GW, GW);
 }
 function recordFrame(now) {
   if (now - lastGrab < GIF_MS) return;
@@ -380,23 +486,17 @@ async function makeGif() {
   gif.finish();
   return new Blob([gif.bytes()], { type:'image/gif' });
 }
-// ölünce GIF'i arka planda hazırla; paylaşırken beklemek gerekmesin
-let prepId = 0, shareUrl = null;
+// ölünce GIF'i arka planda hazırla; indirirken beklemek gerekmesin
+let prepId = 0;
 async function prepGif() {
-  const id = ++prepId; shareUrl = null;
+  const id = ++prepId;
   await new Promise(r => setTimeout(r, 1500));          // kuyruk kareleri bitsin
-  if (id !== prepId || gifBlob) return;
-  try { const b = await makeGif(); if (id === prepId && b) gifBlob = b; } catch (_) {}
+  if (id !== prepId) return;
+  try { if (!gifBlob) { const b = await makeGif(); if (id === prepId && b) gifBlob = b; } } catch (_) {}
+  if (id === prepId && gifBlob) showGif();               // kendiliğinden hazırlanan GIF kartta görünsün
 }
-// GIF'i sunucuya yükle, önizlemesi GIF olan paylaşım bağlantısını al
-async function uploadGif(blob) {
-  const fd = new FormData();
-  fd.append('gif', blob, 'enik.gif'); fd.append('lv', lvl); fd.append('rk', RANKS[deadRank][0]);
-  const r = await fetch('paylas.php', { method:'POST', body:fd });
-  if (!r.ok) throw new Error('upload ' + r.status);
-  return (await r.json()).url;
-}
-function gifReset() { prepId++; shareUrl = null; const b = $('gif'); b.disabled = false; b.textContent = 'GIF Olarak Paylaş 🎞️'; $('gifPrev').classList.add('hidden'); gifBlob = null; }
+function showGif() { $('gifPrev').src = URL.createObjectURL(gifBlob); $('gifPrev').classList.remove('hidden'); }
+function gifReset() { prepId++; $('gifPrev').classList.add('hidden'); $('shareTip').classList.add('hidden'); gifBlob = null; }
 
 /* ---------- Enik fotoğrafları (arka planı silinmemiş, aynen öyle) ---------- */
 const FONT = "'Comic Sans MS','Comic Neue','Chalkboard SE',cursive";
@@ -435,23 +535,13 @@ function wordArt(text, x, y, size, tilt) {
 
 function draw(now) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = '#5ab4ff'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = wld.sky; ctx.fillRect(0, 0, cv.width, cv.height);
   const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
   ctx.setTransform(scale, 0, 0, scale, sx * scale, (sy - camY) * scale);
   const top = camY, bot = camY + viewH;
 
-  // gökyüzü: çocuk çizimi güneş + bulut
-  if (top < 0) {
-    ctx.fillStyle = '#5ab4ff'; ctx.fillRect(0, top, W, -top);
-    ctx.strokeStyle = '#ffd400'; ctx.lineWidth = 4;
-    for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 + now / 3000; ctx.beginPath(); ctx.moveTo(300 + Math.cos(a) * 34, -230 + Math.sin(a) * 34); ctx.lineTo(300 + Math.cos(a) * 52, -230 + Math.sin(a) * 52); ctx.stroke(); }
-    ctx.fillStyle = '#ffee00'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.arc(300, -230, 27, 0, 7); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#000'; ctx.fillRect(290, -236, 4, 4); ctx.fillRect(305, -236, 4, 4);
-    ctx.beginPath(); ctx.arc(300, -226, 9, .2, Math.PI - .2); ctx.stroke();
-    ctx.fillStyle = '#fff';
-    [[70, -260, 22], [95, -268, 26], [122, -258, 20]].forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x + (now / 80 % 400) - 100, y, r, 0, 7); ctx.fill(); });
-  }
+  // gökyüzü: dünyaya göre güneş / ay / kar bulutları / gezegen
+  if (top < 0) drawSky(top, now);
 
   // rütbe bantları: göz yakan düz renkler + WordArt yazılar
   for (let z = 0; z < NB; z++) {
@@ -479,7 +569,7 @@ function draw(now) {
     ctx.moveTo(0, 6); ctx.lineTo(LEDGE, 6); ctx.lineTo(cfg.lb, D); ctx.lineTo(cfg.lb, D + SLAB); ctx.lineTo(0, D + SLAB); ctx.closePath();
     ctx.moveTo(W, -1); ctx.lineTo(TOP_R, -1); ctx.lineTo(cfg.rb, D); ctx.lineTo(cfg.rb, D + SLAB); ctx.lineTo(W, D + SLAB); ctx.closePath();
   };
-  ctx.fillStyle = '#9b5a2b'; wallPath(); ctx.fill();
+  ctx.fillStyle = wld.wall; wallPath(); ctx.fill();
   // lekeler ve toprak süsleri sadece duvarın içine çizilir (taşmasın)
   ctx.save(); wallPath(); ctx.clip();
   drawSoil(top, bot, now);
@@ -526,10 +616,21 @@ function draw(now) {
     ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); ctx.ellipse(hx - s * .45, hy - s * .35, s * .22, s * .14, -.6, 0, 7); ctx.fill();
   }
 
-  // platform: yeşil Paint çimeni
-  ctx.fillStyle = '#3ad13a'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+  // platform: dünyaya göre çimen / kar / ay tozu
+  ctx.fillStyle = wld.grass; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
   ctx.fillRect(0, -2, LEDGE, 9); ctx.strokeRect(-3, -2, LEDGE + 3, 9);
   ctx.fillRect(TOP_R, -2, W - TOP_R, 9); ctx.strokeRect(TOP_R, -2, W - TOP_R + 3, 9);
+  if (wld.ad === 'Kar') {                // platformun üstünde kar tümsekleri
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#9fb8d0'; ctx.lineWidth = 1.5;
+    for (let x = 6; x < LEDGE; x += 22) { ctx.beginPath(); ctx.ellipse(x + jit(x) * 6, -2, 9 + jit(x + 3) * 4, 4.5, 0, Math.PI, 0); ctx.fill(); ctx.stroke(); }
+  }
+  // kayıt noktası seviyesinde platformda bayrak
+  if (isCheckpoint(lvl)) {
+    const fx = 150, wave = Math.sin(now / 200) * 2;
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(fx, -2); ctx.lineTo(fx, -48); ctx.stroke();
+    ctx.fillStyle = '#e02020'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, -47); ctx.lineTo(fx - 26, -40 + wave); ctx.lineTo(fx, -32); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 8px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(lvl, fx - 9, -39 + wave / 2);
+  }
 
   // düşerken arkada solan hayaletler
   if (state === 'air') {
@@ -566,11 +667,69 @@ function draw(now) {
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - l); ctx.stroke();
     }
   }
+  // kar dünyasında ekranın her yerinde yağan kar (ekran koordinatında)
+  if (wld.ad === 'Kar') {
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    for (let k = 0; k < 45; k++) {
+      const sp = .5 + jit(k + 960) * .9, x = (jit(k + 900) * W + Math.sin(tick * .02 + k) * 10) * scale;
+      const y = ((jit(k + 930) * viewH + tick * sp) % viewH) * scale, r = (1.2 + jit(k + 990) * 2) * scale;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    }
+  }
   // stok fotoğraf filigranı
   ctx.save(); ctx.translate(cv.width / 2, cv.height * .62); ctx.rotate(-.5);
   ctx.font = 'bold ' + Math.round(34 * scale) + 'px ' + FONT; ctx.textAlign = 'center';
   ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fillText('enikler.com', 0, 0); ctx.fillText('ÖNİZLEME', 0, 46 * scale);
   ctx.restore();
+}
+
+/* ---------- Dünyaya göre gökyüzü ---------- */
+function drawStars(y0, y1, n, seed) {          // göz kırpan yıldızlar
+  for (let k = 0; k < n; k++) {
+    const x = jit(k + seed) * W, y = y0 + jit(k + seed + 77) * (y1 - y0), s = 1.5 + jit(k + seed + 150) * 2;
+    ctx.globalAlpha = .45 + .55 * Math.abs(Math.sin(tick * .03 + k)); ctx.fillStyle = '#fff';
+    ctx.fillRect(x - s / 2, y - s / 2, s, s);
+    if (s > 3) { ctx.fillRect(x - s * 1.4, y - .5, s * 2.8, 1); ctx.fillRect(x - .5, y - s * 1.4, 1, s * 2.8); }
+  }
+  ctx.globalAlpha = 1;
+}
+function drawSky(top, now) {
+  ctx.fillStyle = wld.sky; ctx.fillRect(0, top, W, -top);
+  const cloud = (col, list) => { ctx.fillStyle = col; list.forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x + (now / 80 % 400) - 100, y, r, 0, 7); ctx.fill(); }); };
+  if (wld.ad === 'Gündüz') {                  // çocuk çizimi güneş + bulut
+    ctx.strokeStyle = '#ffd400'; ctx.lineWidth = 4;
+    for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 + now / 3000; ctx.beginPath(); ctx.moveTo(300 + Math.cos(a) * 34, -230 + Math.sin(a) * 34); ctx.lineTo(300 + Math.cos(a) * 52, -230 + Math.sin(a) * 52); ctx.stroke(); }
+    ctx.fillStyle = '#ffee00'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(300, -230, 27, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.fillRect(290, -236, 4, 4); ctx.fillRect(305, -236, 4, 4);
+    ctx.beginPath(); ctx.arc(300, -226, 9, .2, Math.PI - .2); ctx.stroke();
+    cloud('#fff', [[70, -260, 22], [95, -268, 26], [122, -258, 20]]);
+  } else if (wld.ad === 'Gece') {             // hilal ay, yıldızlar, koyu bulut
+    drawStars(top + 10, -20, 40, 800);
+    ctx.fillStyle = '#fff4c2'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(300, -232, 26, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = wld.sky; ctx.beginPath(); ctx.arc(313, -240, 22, 0, 7); ctx.fill();          // hilal kesiği
+    ctx.fillStyle = '#000'; ctx.fillRect(286, -236, 4, 4);                                          // uykulu göz
+    ctx.beginPath(); ctx.arc(290, -222, 6, .3, Math.PI - .3); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 14px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('z', 322 + Math.sin(now / 500) * 3, -262 - (now / 40 % 20));
+    cloud('#2f3a73', [[70, -250, 20], [95, -258, 24], [120, -248, 18]]);
+  } else if (wld.ad === 'Kar') {              // soluk güneş + iri kar bulutları
+    ctx.fillStyle = '#fffbe0'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(300, -232, 24, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.fillRect(291, -238, 4, 4); ctx.fillRect(305, -238, 4, 4);
+    ctx.beginPath(); ctx.arc(300, -226, 6, Math.PI + .3, -.3); ctx.stroke();                     // üşümüş ağız
+    cloud('#fff', [[60, -262, 26], [92, -272, 32], [124, -260, 24], [150, -266, 20]]);
+  } else {                                    // uzay: çok yıldız, halkalı gezegen, küçük dünya
+    drawStars(top + 10, -20, 70, 850);
+    ctx.save(); ctx.translate(292, -232); ctx.rotate(-.35);
+    ctx.strokeStyle = '#ffd9a8'; ctx.lineWidth = 5; ctx.beginPath(); ctx.ellipse(0, 0, 42, 11, 0, Math.PI, 0); ctx.stroke();
+    ctx.fillStyle = '#ffb36b'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(0, 0, 23, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(160,80,20,.5)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-20, -6); ctx.lineTo(20, -6); ctx.moveTo(-21, 6); ctx.lineTo(21, 6); ctx.stroke();
+    ctx.strokeStyle = '#ffd9a8'; ctx.lineWidth = 5; ctx.beginPath(); ctx.ellipse(0, 0, 42, 11, 0, 0, Math.PI); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = '#3fa7f5'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(70, -280, 11, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#3ad13a'; ctx.beginPath(); ctx.ellipse(66, -283, 5, 3, .4, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(74, -276, 3, 2, 0, 0, 7); ctx.fill();
+  }
 }
 
 /* ---------- Toprak: katmanlar, çakıllar, kökler, köstebek, dinozor, fosiller, kristaller, şişe, sandık ---------- */
@@ -590,7 +749,7 @@ function drawSoil(top, bot, now) {
   const vis = (y, m) => y > top - m && y < bot + m;
   const dens = D / 1600;                       // kısa kuyuda (ilk seviyeler) daha az süs: sıkışık durmasın
   // 1) dalgalı toprak katmanları
-  const tones = ['#8d5127', '#a6663a', '#844a22', '#a05f33'];
+  const tones = wld.tones;
   for (let i = 0; 40 + i * 140 < D + SLAB; i++) {
     const y0 = 40 + i * 140; if (!vis(y0, 120)) continue;
     ctx.fillStyle = tones[i % 4]; ctx.beginPath();
@@ -611,7 +770,7 @@ function drawSoil(top, bot, now) {
     ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(x - r * .4, y - r * .4, r * .45, r * .25, a, 0, 7); ctx.fill();
   }
   // 3) kökler: çimenden aşağı incelerek sarkar, yan filizli
-  if (vis(40, 120)) {
+  if (vis(40, 120) && wld.ad !== 'Uzay') {     // uzayda bitki yok
     for (const pass of [0, 1]) for (let k = 0; k < 6; k++) {
       let x = 14 + k * 25 + jit(k + 500) * 8, y = 6, w = 4.5;
       for (let s = 0; s < 6; s++) {
@@ -904,7 +1063,8 @@ function drawPolitician(x, gy) {
 // kuyunun altı: Paint çizimi bir sokak
 function drawStreet(now) {
   const y0 = D + SLAB, yr = ROAD;
-  ctx.fillStyle = '#ffc266'; ctx.fillRect(0, D, W, yr - D);              // gün batımı gökyüzü (yer altında, neden olmasın)
+  ctx.fillStyle = wld.street; ctx.fillRect(0, D, W, yr - D);              // sokağın gökyüzü (yer altında, neden olmasın)
+  if (wld.ad === 'Gece' || wld.ad === 'Uzay') drawStars(D + 20, yr - 60, 18, 1200);
   // binalar
   const cols = ['#e05a5a', '#5a8ae0', '#e0c35a', '#7ac46a', '#b57ae0', '#e08a3c', '#4fc4c4'];
   for (let k = 0; k < 7; k++) {
@@ -965,14 +1125,19 @@ function drawStreet(now) {
   drawStreetEvent(yr);
 }
 
-// fotoğrafı kare kare, arka planıyla, kaskatı çiz
+// fotoğrafı kare kare, arka planıyla, kaskatı çiz.
+// Her fotoğraf ortasından KARE kırpılır ve hep aynı boyda (PH×PH) çizilir: dikey/yatay fotoğraf
+// eniği daha dar ya da geniş göstermesin (çarpışma fotoğraftan bağımsız, sabit HIT mesafesi).
+const PH = 44;
 function photoBox(x, y, rot, flip, k = 1) {   // k > 1: dikey uzar (fırlarken/düşerken), k < 1: yassılır
-  const h = 54, w = photoOk ? Math.min(54, h * photo.width / photo.height) : 40;
+  const s = PH;
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(flip, 1); ctx.scale(1 / k, k);
-  ctx.fillStyle = '#fff'; ctx.fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4); // yamuk beyaz çerçeve
-  if (photoOk) ctx.drawImage(photo, -w / 2, -h / 2, w, h);
-  else { ctx.fillStyle = '#ccc'; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.fillStyle = '#000'; ctx.font = 'bold 9px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('yükleniyo', 0, 3); }
-  ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.strokeRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
+  ctx.fillStyle = '#fff'; ctx.fillRect(-s / 2 - 2, -s / 2 - 2, s + 4, s + 4); // yamuk beyaz çerçeve
+  if (photoOk) {
+    const m = Math.min(photo.width, photo.height);
+    ctx.drawImage(photo, (photo.width - m) / 2, (photo.height - m) / 2, m, m, -s / 2, -s / 2, s, s);
+  } else { ctx.fillStyle = '#ccc'; ctx.fillRect(-s / 2, -s / 2, s, s); ctx.fillStyle = '#000'; ctx.font = 'bold 9px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('yükleniyo', 0, 3); }
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.strokeRect(-s / 2 - 2, -s / 2 - 2, s + 4, s + 4);
   ctx.restore();
 }
 
@@ -980,13 +1145,13 @@ function drawEnik(x, y, dir, rot, now) {
   if (state === 'ready') {
     const stepPose = Math.floor(e.walk / 1.6) % 2;       // 2 kareli "animasyon"
     const drunk = cfg.sarhos ? Math.sin(tick * 0.09) * .35 : 0;
-    photoBox(x, y - 10 - stepPose * 4, (stepPose ? .14 : -.14) + drunk, dir);
+    photoBox(x, y - 7 - stepPose * 4, (stepPose ? .14 : -.14) + drunk, dir);
   } else if (state === 'air') {
     const k = 1 + Math.min(.3, Math.max(0, e.vy) * .02) + e.sq / 8 * .25;   // hızlandıkça uzar
     photoBox(x, y - 8, rot + Math.max(0, e.y) * 0.004, 1, k);  // düşerken yavaşça döner
   } else {
     const t = Math.min(1, (now - winAt) / 250);          // yere çakılınca yamyassı olup geri gelsin
-    ctx.save(); ctx.translate(x, y); ctx.scale(1 + .35 * (1 - t), 1 - .35 * (1 - t)); photoBox(0, -27, 0, 1); ctx.restore();
+    ctx.save(); ctx.translate(x, y); ctx.scale(1 + .35 * (1 - t), 1 - .35 * (1 - t)); photoBox(0, -PH / 2, 0, 1); ctx.restore();
   }
 }
 
@@ -1038,51 +1203,107 @@ $('snd').onclick = () => {
 /* ---------- Kontroller: tek dokunuş ---------- */
 cv.addEventListener('pointerdown', ev => { ev.preventDefault(); unlockAudio(); jump(); });
 addEventListener('keydown', ev => {
+  if (!$('board').classList.contains('hidden')) { if (ev.key === 'Escape') closeBoard(); return; }   // tablo açıkken oyun tuş almaz
   if (ev.key !== ' ' && ev.key !== 'Enter' && ev.key !== 'ArrowDown') return;
   ev.preventDefault(); unlockAudio();
   if (state === 'ready') jump();
-  else if (state === 'dead' && performance.now() - deadAt > 800) newGame();
+  else if (state === 'dead' && performance.now() - deadAt > 800) (checkpoint > 1 ? continueGame : newGame)();
 });
 
 $('again').onclick = newGame;
-const shareText = () => `Enik Düşüşü'nde Seviye ${lvl}'de "${RANKS[deadRank][0]}" oldum 🐾 Eniği cuk diye düşürebilir misin?`;
-$('gif').onclick = async () => {
-  const b = $('gif'); if (b.disabled) return;
-  b.disabled = true; b.textContent = 'GIF hazırlanıyor… ⏳';
-  try {
-    if (!gifBlob) gifBlob = await makeGif();
-    if (!gifBlob) { b.textContent = 'Kayıt bulunamadı 😿'; return; }
-    const url = URL.createObjectURL(gifBlob);
-    $('gifPrev').src = url; $('gifPrev').classList.remove('hidden');
-    if (typeof gtag === 'function') gtag('event', 'gif_paylas', { oyun:'enik_dusus', seviye:lvl });
-    const file = new File([gifBlob], 'enik-dusus-seviye-' + lvl + '.gif', { type:'image/gif' });
-    if (navigator.canShare && navigator.canShare({ files:[file] })) {
-      try { await navigator.share({ files:[file], text:shareText() + ' ' + GAME_URL }); } catch (_) {}
-      b.textContent = 'Tekrar Paylaş 🎞️';
-    } else {
-      const a = document.createElement('a'); a.href = url; a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
-      b.textContent = 'GIF indirildi ✔ X\'e yükle';
-    }
-  } catch (err) {
-    b.textContent = 'Olmadı 😿 Tekrar dene';
-  } finally { b.disabled = false; }
-};
+$('cont').onclick = continueGame;
+// sayıya göre bulunma eki: 1'de, 3'te, 6'da, 10'da, 40'ta ...
+function deEki(n) {
+  const bir = ['', 'de', 'de', 'te', 'te', 'te', 'da', 'de', 'de', 'da'], on = ['', 'da', 'de', 'da', 'ta', 'de', 'ta', 'te', 'de', 'da'];
+  return n + "'" + (n % 10 ? bir[n % 10] : n % 100 ? on[(n % 100) / 10] : 'de');
+}
+const shareText = () => `Enik Düşüşü'nde Seviye ${deEki(lvl)} "${RANKS[deadRank][0]}" oldum 🐾` + (mySira ? ` Liderlik tablosunda #${mySira} sıradayım!` : '') + ' Eniği cuk diye düşürebilir misin?';
+// GIF'i indir: sunucuya hiçbir şey yüklenmez, X açılmaz. İndirince kısa not + isteyene "X'i aç" bağlantısı.
 $('share').onclick = async () => {
   const b = $('share'); if (b.disabled) return;
-  const text = shareText(), old = b.textContent;
-  if (typeof gtag === 'function') gtag('event', 'skor_paylas', { oyun:'enik_dusus', seviye:lvl });
-  b.disabled = true; b.textContent = 'Link hazırlanıyor… ⏳';
-  const w = navigator.share ? null : window.open('about:blank', '_blank');   // popup engelleyici async'ten sonra açmaya izin vermez
-  let url = GAME_URL;
-  try {                                                  // GIF yüklenebilirse linkin önizlemesi GIF olur, olmazsa düz oyun linki
-    if (!shareUrl) { if (!gifBlob) gifBlob = await makeGif(); if (gifBlob) shareUrl = await uploadGif(gifBlob); }
-    if (shareUrl) url = shareUrl;
-  } catch (_) {}
+  const old = b.textContent;
+  b.disabled = true; b.textContent = 'GIF hazırlanıyor… ⏳';
+  try { if (!gifBlob) { gifBlob = await makeGif(); if (gifBlob) showGif(); } } catch (_) {}
   b.disabled = false; b.textContent = old;
-  if (navigator.share) { try { await navigator.share({ text, url }); } catch (_) {} return; }
-  const href = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
-  if (w) w.location.href = href; else window.open(href, '_blank', 'noopener');
+  if (!gifBlob) { b.textContent = 'GIF hazırlanamadı 😿'; return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(gifBlob); a.download = 'enik-dusus-seviye-' + lvl + '.gif';
+  document.body.appendChild(a); a.click(); a.remove();
+  $('xOpen').href = 'https://x.com/intent/post?text=' + encodeURIComponent(shareText()) + '&url=' + encodeURIComponent(GAME_URL);
+  $('shareTip').classList.remove('hidden');
+  if (typeof gtag === 'function') gtag('event', 'gif_indir', { oyun:'enik_dusus', seviye:lvl });
 };
+
+/* ---------- Liderlik tablosu: X kullanıcı adı + profil fotoğrafı ---------- */
+let nick = '', mySira = 0;
+try { nick = localStorage.getItem('enikNick') || ''; } catch (_) {}
+const avatarUrl = n => '/avatar.php?u=' + encodeURIComponent(n);
+const nickOk = n => /^[A-Za-z0-9_]{1,15}$/.test(n);
+function avatarEl(n, cls) {                // fotoğraf gelmezse baş harfli yuvarlak
+  const im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; im.src = avatarUrl(n); if (cls) im.className = cls;
+  im.onerror = () => { const d = document.createElement('span'); d.className = 'noav'; d.textContent = n[0].toUpperCase(); im.replaceWith(d); };
+  return im;
+}
+async function liderPost(l, r) {
+  const fd = new FormData(); fd.append('nick', nick); fd.append('lv', l); fd.append('rk', r);
+  const res = await fetch('lider.php', { method:'POST', body:fd }); return res.json();
+}
+async function liderGet() { const res = await fetch('lider.php?nick=' + encodeURIComponent(nick), { cache:'no-store' }); return res.json(); }
+function showLider(msg) {                  // kartın liderlik bölümünü çiz
+  $('lgForm').classList.toggle('hidden', !!nick); $('lgMe').classList.toggle('hidden', !nick);
+  if (!nick) { $('lgMsg').textContent = msg || 'Profil fotoğrafın tabloda görünür.'; $('lgMsg').className = 'lgmsg'; return; }
+  const pp = $('lgPp');                    // fotoğraf gelmezse baş harfli sarı yuvarlak
+  pp.onerror = () => {
+    pp.onerror = null;
+    pp.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#FFE9A8"/><text x="20" y="27" font-family="sans-serif" font-size="20" font-weight="900" text-anchor="middle" fill="#8a5a00">' + nick[0].toUpperCase() + '</text></svg>');
+  };
+  pp.src = avatarUrl(nick);
+  $('lgName').textContent = '@' + nick;
+  const r = $('lgRank'); r.textContent = (msg ? msg + ' · ' : '') + (mySira ? 'Sıran: #' + mySira + ' · ' : '');
+  const ch = document.createElement('a'); ch.href = '#'; ch.textContent = 'değiştir';
+  ch.onclick = ev => { ev.preventDefault(); $('lgNick').value = nick; nick = ''; showLider(); $('lgNick').focus(); };
+  r.appendChild(ch);
+}
+async function onGameOver() {              // ölünce: kullanıcı adı varsa skoru gönder (sadece 1. seviyeden başlanan oyun)
+  showLider();
+  if (!nick) return;
+  try {
+    if (runFromStart) { const d = await liderPost(lvl, deadRank); if (d && d.ok) { mySira = d.sira; showLider(d.rekor ? 'Tabloya yazıldı!' : ''); } }
+    else { const d = await liderGet(); mySira = d.ben ? d.ben.sira : 0; showLider('Kayıttan devamda skor yazılmaz'); }
+  } catch (_) {}
+}
+$('lgSave').onclick = async () => {
+  const v = $('lgNick').value.trim().replace(/^@/, '');
+  if (!nickOk(v)) { $('lgMsg').textContent = 'Sadece harf, rakam ve _ (en fazla 15)'; $('lgMsg').className = 'lgmsg bad'; return; }
+  nick = v; try { localStorage.setItem('enikNick', nick); } catch (_) {}
+  if (typeof gtag === 'function') gtag('event', 'lider_giris', { oyun:'enik_dusus' });
+  showLider('Kaydediliyor…');
+  try {
+    if (state === 'dead' && runFromStart) { const d = await liderPost(lvl, deadRank); if (d && d.ok) mySira = d.sira; }
+    else { const d = await liderGet(); mySira = d.ben ? d.ben.sira : 0; }
+  } catch (_) {}
+  showLider(mySira ? 'Tabloya yazıldı!' : '');
+};
+$('lgNick').addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') $('lgSave').click(); });
+async function openBoard() {
+  $('board').classList.remove('hidden'); $('bList').innerHTML = ''; $('bFoot').textContent = 'Yükleniyor…';
+  try {
+    const d = await liderGet(), list = $('bList');
+    (d.top || []).forEach((p, i) => {
+      const li = document.createElement('li'); if (nick && p.n.toLowerCase() === nick.toLowerCase()) li.className = 'me';
+      const no = document.createElement('span'); no.className = 'no'; no.textContent = i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1;
+      const nm = document.createElement('span'); nm.className = 'nm';
+      const a = document.createElement('a'); a.href = 'https://x.com/' + p.n; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '@' + p.n;
+      const sm = document.createElement('small'); sm.textContent = 'Seviye ' + p.l + ' · ' + (RANKS[p.r] ? RANKS[p.r][0] : '');
+      nm.append(a, sm); li.append(no, avatarEl(p.n), nm); list.appendChild(li);
+    });
+    if (d.ben) mySira = d.ben.sira;
+    $('bFoot').textContent = !d.top || !d.top.length ? 'Henüz kimse yok, ilk sen ol! 🐾'
+      : d.toplam + ' oyuncu' + (d.ben ? ' · Sen #' + d.ben.sira + ' (Seviye ' + d.ben.l + ')' : nick ? '' : ' · Oyun bitince kullanıcı adınla gir');
+  } catch (_) { $('bFoot').textContent = 'Tablo şu an açılamadı 😿'; }
+}
+const closeBoard = () => $('board').classList.add('hidden');
+$('lbBtn').onclick = openBoard; $('lgSee').onclick = openBoard; $('bX').onclick = closeBoard;
+$('board').addEventListener('click', ev => { if (ev.target.id === 'board') closeBoard(); });
 
 /* ---------- Döngü ---------- */
 let last = performance.now(), acc = 0;
