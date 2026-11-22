@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /e/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9_-]+)/?$ index.php?k=$1&p=$2 [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([A-Za-z0-9-]+)/?$ index.php?k=$1 [L,QSA]

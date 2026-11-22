@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CCZH5RWPMD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CCZH5RWPMD');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FFF4D6">
+<title>Enik Tinderi & Galeri | enikler.com</title>
+<meta name="description" content="Sevimli enikleri sağa kaydırarak beğen, bütün enik fotoğraflarını incele ve cihazına hemen indir!">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #FFB703;
+    --accent-d: #F08C00;
+    --ink: #2B2118;
+    --muted: #8a7a66;
+    --soft: #b8a688;
+    --line: #f2e2be;
+    --card-bg: #FFFFFF;
+    --like: #22B573;
+    --like-bg: #E8F8F0;
+    --nope: #F0506E;
+    --nope-bg: #FEECEF;
+    --blue: #2A9D8F;
+    --blue-bg: #E7F6F5;
+    --shadow: 0 8px 20px rgba(120,80,20,.12);
+    --shadow-lg: 0 16px 36px rgba(120,80,20,.2);
+    --radius-lg: 26px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(60vmax 60vmax at 0% 0%, #FFE9A8 0%, transparent 60%),
+      radial-gradient(50vmax 50vmax at 100% 100%, #FFD3C2 0%, transparent 60%),
+      #FFF8E7;
+    background-attachment: fixed;
+    user-select: none;
+    -webkit-user-select: none;
+    overscroll-behavior-y: contain;
+  }
+
+  body {
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  }
+
+  button, input { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* ================= ÜST BİLGİ / HEADER ================= */
+  header {
+    flex: none; position: relative;
+    padding: 8px 12px 6px;
+    max-width: 840px; margin: 0 auto; width: 100%;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 20;
+  }
+
+  .nav-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+
+  .nav-left {
+    display: flex; align-items: center; gap: 8px; min-width: 0;
+  }
+
+  .btn-round {
+    width: 38px; height: 38px; border-radius: 50%; background: #fff;
+    border: 2px solid var(--line); box-shadow: var(--shadow);
+    display: grid; place-items: center; text-decoration: none;
+    color: var(--ink); font-size: 1.15rem; font-weight: 900;
+    cursor: pointer; transition: transform .15s, background .15s; flex: none;
+    touch-action: manipulation;
+  }
+  .btn-round:active { transform: scale(.92); }
+
+  .brand-title {
+    display: flex; flex-direction: column; line-height: 1.15; min-width: 0;
+  }
+  .brand-title h1 {
+    margin: 0; font-size: clamp(1.15rem, 4vw, 1.45rem);
+    font-weight: 900; letter-spacing: -.4px; color: var(--accent-d);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .brand-title h1 span { color: var(--ink); }
+  .brand-title p {
+    margin: 2px 0 0; font-size: .75rem; font-weight: 700; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .badge-count {
+    background: #fff; border: 2px solid var(--line); border-radius: 99px;
+    padding: 5px 11px; font-size: clamp(.72rem, 2.5vw, .82rem); font-weight: 800; color: var(--ink);
+    box-shadow: var(--shadow); display: flex; align-items: center; gap: 5px;
+    white-space: nowrap; flex: none;
+  }
+  .badge-count span { color: var(--accent-d); font-weight: 900; }
+
+  /* ================= GÖRÜNÜM SEÇİCİ (SEKME BUTONLARI) ================= */
+  .view-tabs {
+    display: flex; background: rgba(255, 255, 255, 0.85);
+    padding: 3px; border-radius: 16px; border: 2px solid var(--line);
+    box-shadow: 0 3px 10px rgba(120,80,20,.06); gap: 4px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+
+  .tab-btn {
+    flex: 1; border: 0; background: transparent;
+    padding: 8px 6px; border-radius: 13px; font-weight: 900;
+    font-size: clamp(.76rem, 2.7vw, .88rem); color: var(--muted);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 5px; transition: all .2s cubic-bezier(.2,.8,.2,1);
+    white-space: nowrap; touch-action: manipulation;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active {
+    background: #fff; color: var(--accent-d);
+    box-shadow: 0 3px 12px rgba(120,80,20,.12);
+  }
+  .tab-btn .badge-num {
+    background: var(--accent); color: #fff; border-radius: 99px;
+    padding: 1px 6px; font-size: .7rem; font-weight: 900;
+  }
+
+  .tab-text-short { display: none; }
+  .tab-text-full { display: inline; }
+
+  @media (max-width: 480px) {
+    .tab-text-short { display: inline; }
+    .tab-text-full { display: none; }
+    header { padding: 6px 10px 4px; gap: 6px; }
+    .brand-title p { display: none; }
+  }
+
+  /* ================= ANA İÇERİK ================= */
+  main {
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+    max-width: 900px; margin: 0 auto; width: 100%; position: relative;
+  }
+
+  /* ================= 1. BÖLÜM: TİNDER SWİPE ALANI ================= */
+  #view-swipe {
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+    position: relative; overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: pan-y;
+  }
+
+  .swipe-stage {
+    position: relative; flex: 1; min-height: 0;
+    margin: 4px 10px 4px;
+    display: grid; place-items: center;
+    width: calc(100% - 20px);
+    max-width: 430px;
+    align-self: center;
+  }
+
+  .card {
+    position: absolute; inset: 0; margin: auto;
+    width: 100%; height: 100%;
+    max-width: 420px;
+    max-height: min(580px, 100%);
+    aspect-ratio: 3.2 / 4.4;
+    border-radius: clamp(20px, 5vw, 28px);
+    background: #fff; overflow: hidden;
+    touch-action: none; cursor: grab;
+    box-shadow: var(--shadow-lg);
+    transform: translate3d(var(--x, 0), var(--y, 0), 0) rotate(var(--r, 0deg)) scale(var(--s, 1));
+    transition: transform .32s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+    will-change: transform; border: 3px solid #fff;
+  }
+  .card.under {
+    --s: .94; --y: 14px; z-index: 1; pointer-events: none; opacity: .88;
+  }
+  .card.under-2 {
+    --s: .88; --y: 26px; z-index: 0; pointer-events: none; opacity: .6;
+  }
+  .card.top { z-index: 3; }
+  .card.drag { transition: none; cursor: grabbing; }
+  .card.gone { opacity: 0; pointer-events: none; }
+
+  .card-img-wrap {
+    width: 100%; height: 100%; position: relative; background: #FFF4D6;
+    overflow: hidden;
+  }
+  .card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    pointer-events: none; -webkit-user-drag: none;
+    transition: transform .3s ease;
+  }
+
+  /* Kart üstü gölge ve bilgiler */
+  .card-shade {
+    position: absolute; inset: auto 0 0 0; height: 50%;
+    background: linear-gradient(to top, rgba(20, 10, 0, .88) 0%, rgba(20, 10, 0, .45) 60%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .card-info {
+    position: absolute; left: 14px; right: 14px; bottom: 14px;
+    color: #fff; pointer-events: none; z-index: 2;
+  }
+
+  .card-tags {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;
+  }
+  .tag {
+    background: rgba(255, 255, 255, .28); backdrop-filter: blur(4px);
+    padding: 3px 9px; border-radius: 99px; font-size: .72rem; font-weight: 800;
+  }
+  .tag.hot { background: #FF5A36; color: #fff; }
+  .tag.liked { background: var(--like); color: #fff; }
+
+  .card-title-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .card-title-row b {
+    font-size: clamp(1.1rem, 4vw, 1.3rem); font-weight: 900; letter-spacing: -.3px;
+  }
+  .card-title-row .rate-pill {
+    background: rgba(255, 255, 255, .95); color: var(--ink);
+    padding: 3px 9px; border-radius: 99px; font-size: .78rem; font-weight: 900;
+    box-shadow: 0 3px 8px rgba(0,0,0,.2);
+  }
+
+  .rate-bar {
+    height: 6px; border-radius: 99px; background: rgba(255,255,255,.3);
+    margin-top: 8px; overflow: hidden;
+  }
+  .rate-bar i {
+    display: block; height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), #FF5A36);
+  }
+
+  /* Kart içi sağ üst hızlı indirme butonu (Mobil dostu geniş dokunma alanı) */
+  .card-quick-dl {
+    position: absolute; top: 12px; right: 12px; z-index: 5;
+    background: rgba(255, 255, 255, .94); backdrop-filter: blur(8px);
+    border: 0; border-radius: 99px; padding: 7px 13px;
+    font-weight: 900; font-size: .8rem; color: var(--ink);
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.2); transition: transform .15s, background .15s;
+    touch-action: manipulation;
+  }
+  .card-quick-dl:hover { transform: scale(1.05); background: #fff; }
+  .card-quick-dl:active { transform: scale(.92); }
+
+  /* Kart damgaları (BEĞENDİM / GEÇ) */
+  .stamp {
+    position: absolute; top: 20px; padding: 5px 14px; border: 3px solid;
+    border-radius: 14px; font-weight: 900; font-size: clamp(1.2rem, 5vw, 1.6rem); letter-spacing: 1px;
+    opacity: 0; pointer-events: none; background: rgba(255,255,255,.94);
+    z-index: 10; box-shadow: 0 6px 20px rgba(0,0,0,.18);
+  }
+  .stamp.like {
+    left: 14px; color: var(--like); border-color: var(--like);
+    transform: rotate(-12deg);
+  }
+  .stamp.nope {
+    right: 14px; color: var(--nope); border-color: var(--nope);
+    transform: rotate(12deg);
+  }
+
+  /* Çift Tıklama Kalp Efekti */
+  .double-tap-heart {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 5rem; z-index: 12; pointer-events: none;
+    animation: heartPop .65s ease-out forwards;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,.3));
+  }
+  @keyframes heartPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; }
+    75% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+  }
+
+  /* Mobil Kaydırma & İpucu Çubuğu */
+  .swipe-hint-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-size: clamp(.7rem, 2.4vw, .76rem); font-weight: 800; color: var(--soft);
+    padding: 2px 8px; flex: none; text-align: center;
+  }
+  .swipe-hint-bar .hint-pass { color: var(--nope); opacity: .85; }
+  .swipe-hint-bar .hint-like { color: var(--like); opacity: .85; }
+  .swipe-hint-bar .hint-dot { color: var(--line); }
+
+  /* Alt Kontrol Butonları (Tinder Aksiyon Çubuğu - Mobilde ASLA Taşmaz) */
+  .swipe-actions {
+    flex: none; display: flex; align-items: center; justify-content: center;
+    gap: clamp(8px, 3.2vw, 18px);
+    padding: 6px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    width: 100%; max-width: 440px; margin: 0 auto;
+  }
+
+  .action-btn {
+    border: 0; border-radius: 50%; cursor: pointer;
+    background: #fff; box-shadow: var(--shadow);
+    display: grid; place-items: center; transition: transform .18s, box-shadow .18s;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    flex: none;
+  }
+  .action-btn:hover { transform: scale(1.08); box-shadow: var(--shadow-lg); }
+  .action-btn:active { transform: scale(.88); }
+
+  .action-btn.small {
+    width: clamp(40px, 11vw, 48px);
+    height: clamp(40px, 11vw, 48px);
+    font-size: clamp(1.1rem, 3.6vw, 1.3rem);
+    color: var(--muted);
+  }
+  .action-btn.large {
+    width: clamp(56px, 15vw, 68px);
+    height: clamp(56px, 15vw, 68px);
+    font-size: clamp(1.55rem, 5vw, 2rem);
+  }
+  .action-btn.undo { color: #F59E0B; }
+  .action-btn.nope { color: var(--nope); }
+  .action-btn.like { color: var(--like); }
+  .action-btn.dl { color: #0284C7; background: #F0F9FF; }
+
+  /* Durum kutusu (Yükleniyor / Bitti / Hata) */
+  .state-box {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px; text-align: center;
+    padding: 20px; z-index: 10; background: rgba(255, 248, 231, .92);
+    backdrop-filter: blur(8px); border-radius: var(--radius-lg);
+  }
+  .state-box.show { display: flex; }
+  .state-box .icon { font-size: 3.5rem; animation: float 1.8s infinite ease-in-out; }
+  .state-box h3 { margin: 0; font-size: 1.3rem; font-weight: 900; }
+  .state-box p { margin: 0; font-size: .88rem; font-weight: 700; color: var(--muted); max-width: 290px; }
+  .state-box .btn-row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* ================= 2. BÖLÜM: BÜTÜN ENİKLER (GALERİ GÖRÜNÜMÜ) ================= */
+  #view-gallery {
+    display: none; flex-direction: column; padding: 6px 12px 40px;
+  }
+  #view-gallery.show { display: flex; }
+
+  .gallery-toolbar {
+    background: #fff; border-radius: 18px; border: 2px solid var(--line);
+    padding: 10px 12px; box-shadow: var(--shadow); margin-bottom: 12px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  @media (min-width: 560px) {
+    .gallery-toolbar {
+      flex-direction: row; align-items: center; justify-content: space-between;
+    }
+  }
+
+  .gallery-filter-chips {
+    display: flex; gap: 6px; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .gallery-filter-chips::-webkit-scrollbar { display: none; }
+
+  .chip-btn {
+    border: 2px solid var(--line); background: #FFFBEF; color: var(--ink);
+    border-radius: 99px; padding: 6px 12px; font: 800 .8rem 'Nunito', sans-serif;
+    cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 5px;
+    white-space: nowrap; flex: none; touch-action: manipulation;
+  }
+  .chip-btn:hover { border-color: var(--accent); }
+  .chip-btn.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+
+  .gallery-meta {
+    font-size: .8rem; font-weight: 800; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+
+  .btn-batch-dl {
+    background: linear-gradient(135deg, #0284C7, #0369A1);
+    color: #fff; border: 0; border-radius: 12px; padding: 7px 12px;
+    font-weight: 900; font-size: .8rem; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; box-shadow: 0 3px 10px rgba(2, 132, 199, .25);
+    transition: transform .15s; touch-action: manipulation; white-space: nowrap;
+  }
+  .btn-batch-dl:active { transform: scale(.95); }
+
+  /* Fotoğraf Izgarası - Mobilde 2 sütun tertemiz grid */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 520px) {
+    .photo-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  }
+  @media (min-width: 768px) {
+    .photo-grid { grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 16px; }
+  }
+  @media (min-width: 1024px) {
+    .photo-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  }
+
+  .grid-card {
+    background: #fff; border-radius: 18px; overflow: hidden;
+    box-shadow: var(--shadow); border: 2px solid var(--line);
+    position: relative; display: flex; flex-direction: column;
+    transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s;
+    cursor: pointer; aspect-ratio: 4 / 5; touch-action: manipulation;
+  }
+  .grid-card:hover {
+    transform: translateY(-3px); box-shadow: var(--shadow-lg);
+  }
+
+  .grid-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    background: #FFF4D6; transition: transform .3s ease;
+  }
+  .grid-card:hover img { transform: scale(1.04); }
+
+  .grid-card-overlay {
+    position: absolute; inset: auto 0 0 0; padding: 10px 8px;
+    background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 65%, transparent 100%);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    color: #fff; z-index: 2; pointer-events: none;
+  }
+
+  .grid-card-info {
+    font-size: .74rem; font-weight: 800; line-height: 1.15;
+  }
+  .grid-card-info b { font-size: .84rem; display: block; }
+
+  .grid-card-actions {
+    display: flex; gap: 5px; pointer-events: auto;
+  }
+
+  .grid-action-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255, 255, 255, .94); backdrop-filter: blur(4px);
+    border: 0; color: var(--ink); font-size: .95rem; display: grid;
+    place-items: center; cursor: pointer; transition: transform .15s, background .15s;
+    box-shadow: 0 3px 8px rgba(0,0,0,.2); touch-action: manipulation;
+  }
+  .grid-action-btn:hover { transform: scale(1.1); background: #fff; }
+  .grid-action-btn:active { transform: scale(.9); }
+  .grid-action-btn.liked { color: var(--nope); }
+
+  .grid-top-badge {
+    position: absolute; top: 8px; left: 8px; z-index: 2;
+    background: rgba(0, 0, 0, .6); backdrop-filter: blur(4px);
+    color: #fff; padding: 2px 7px; border-radius: 99px; font-size: .68rem; font-weight: 800;
+  }
+
+  /* ================= 3. BÖLÜM: BEĞENDİKLERİM GÖRÜNÜMÜ ================= */
+  #view-favorites {
+    display: none; flex-direction: column; padding: 6px 12px 40px;
+  }
+  #view-favorites.show { display: flex; }
+
+  .favorites-empty {
+    background: #fff; border-radius: var(--radius-lg); border: 2px dashed var(--line);
+    padding: 36px 16px; text-align: center; margin-top: 10px;
+  }
+  .favorites-empty .big-emoji { font-size: 3.5rem; margin-bottom: 8px; }
+  .favorites-empty h3 { margin: 0 0 6px; font-size: 1.25rem; font-weight: 900; }
+  .favorites-empty p { margin: 0 0 16px; color: var(--muted); font-size: .88rem; font-weight: 700; }
+
+  /* ================= TAM EKRAN FOTOĞRAF MODALI (LİGHTBOX - MOBİL DOSTU) ================= */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 8, 3, .85);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 999; display: none; place-items: center;
+    padding: 10px; opacity: 0; transition: opacity .25s ease;
+    touch-action: pan-y;
+  }
+  .modal-backdrop.open { display: grid; opacity: 1; }
+
+  .modal-container {
+    background: #fff; width: min(94vw, 480px); border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.4); overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+    max-height: 90vh; max-height: 90dvh;
+    animation: popUp .28s cubic-bezier(.2,.8,.2,1);
+  }
+
+  @keyframes popUp {
+    0% { transform: scale(.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-img-wrapper {
+    position: relative; width: 100%;
+    max-height: 52vh; max-height: 52dvh;
+    background: #140d07; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    touch-action: pan-y;
+  }
+  .modal-img-wrapper img {
+    max-width: 100%; max-height: 52vh; max-height: 52dvh;
+    object-fit: contain; display: block;
+    user-select: none; -webkit-user-drag: none;
+  }
+
+  .modal-close-btn {
+    position: absolute; top: 10px; right: 10px; z-index: 10;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(0, 0, 0, .68); backdrop-filter: blur(4px);
+    color: #fff; border: 0; font-size: 1.15rem; font-weight: 900;
+    cursor: pointer; display: grid; place-items: center; transition: transform .15s;
+    touch-action: manipulation;
+  }
+  .modal-close-btn:hover { transform: scale(1.1); background: rgba(0, 0, 0, .85); }
+  .modal-close-btn:active { transform: scale(.9); }
+
+  .modal-nav-btn {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255, 255, 255, .88); backdrop-filter: blur(4px);
+    color: var(--ink); border: 0; font-size: 1.35rem; font-weight: 900;
+    cursor: pointer; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    transition: transform .15s, background .15s; touch-action: manipulation;
+  }
+  .modal-nav-btn:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+  .modal-nav-btn:active { transform: translateY(-50%) scale(.92); }
+  .modal-nav-btn.prev { left: 10px; }
+  .modal-nav-btn.next { right: 10px; }
+
+  .modal-body {
+    padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .modal-info-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .modal-info-row h3 {
+    margin: 0; font-size: 1.2rem; font-weight: 900;
+  }
+  .modal-info-row .pill {
+    background: #FFFBEF; border: 2px solid var(--line); border-radius: 99px;
+    padding: 3px 10px; font-size: .8rem; font-weight: 800; color: var(--accent-d);
+  }
+
+  .modal-rate-stats {
+    font-size: .8rem; font-weight: 800; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .modal-actions {
+    display: flex; gap: 8px; align-items: center;
+  }
+
+  .btn-modal-dl {
+    flex: 1; background: var(--accent); color: #fff; border: 0;
+    border-radius: 14px; padding: 12px 14px; font: 900 .95rem 'Nunito', sans-serif;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: 0 4px 0 var(--accent-d); transition: transform .15s, box-shadow .15s;
+    touch-action: manipulation;
+  }
+  .btn-modal-dl:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--accent-d); }
+
+  .btn-modal-like {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--like-bg); border: 2px solid var(--like); color: var(--like);
+    font-size: 1.35rem; display: grid; place-items: center; cursor: pointer;
+    transition: transform .15s; flex: none; touch-action: manipulation;
+  }
+  .btn-modal-like:active { transform: scale(.92); }
+  .btn-modal-like.active {
+    background: var(--like); color: #fff;
+  }
+
+  /* ================= BİLDİRİM / TOAST ================= */
+  #toast {
+    position: fixed; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 99px;
+    font-size: .85rem; font-weight: 800; box-shadow: 0 8px 24px rgba(0,0,0,.32);
+    z-index: 9999; display: flex; align-items: center; gap: 6px; opacity: 0;
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+    pointer-events: none; white-space: nowrap; max-width: 90vw;
+  }
+  #toast.show {
+    transform: translateX(-50%) translateY(0); opacity: 1;
+  }
+
+  /* Standart Butonlar */
+  .btn-primary {
+    background: var(--accent); color: #fff; border: 0; border-radius: 15px;
+    padding: 11px 20px; font: 900 .9rem 'Nunito', sans-serif; cursor: pointer;
+    box-shadow: 0 4px 0 var(--accent-d); transition: transform .15s;
+    touch-action: manipulation;
+  }
+  .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--accent-d); }
+
+  .btn-secondary {
+    background: #fff; color: var(--ink); border: 2px solid var(--line);
+    border-radius: 15px; padding: 11px 20px; font: 900 .9rem 'Nunito', sans-serif;
+    cursor: pointer; box-shadow: var(--shadow); transition: transform .15s;
+    touch-action: manipulation;
+  }
+  .btn-secondary:active { transform: scale(.96); }
+
+  .hidden { display: none !important; }
+
+  /* Azaltılmış Hareket */
+  @media (prefers-reduced-motion: reduce) {
+    .card, .action-btn, .modal-backdrop, .grid-card { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="nav-bar">
+    <div class="nav-left">
+      <a class="btn-round" href="/" aria-label="Ana sayfa">←</a>
+      <div class="brand-title">
+        <h1>Enik <span>Tinderi</span> 🐾</h1>
+        <p>Tüm enikleri keşfet, kaydır ve indir!</p>
+      </div>
+    </div>
+    <div class="badge-count" id="headerCount">
+      🐾 <span id="totalCountBadge">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <!-- Sekme Seçici -->
+  <div class="view-tabs" role="tablist">
+    <button class="tab-btn active" id="tabSwipe" role="tab" aria-selected="true">
+      <span>🎴</span>
+      <span class="tab-text-full">Kaydır (Tinder)</span>
+      <span class="tab-text-short">Kaydır</span>
+    </button>
+    <button class="tab-btn" id="tabGallery" role="tab" aria-selected="false">
+      <span>🖼️</span>
+      <span class="tab-text-full">Tüm Enikler</span>
+      <span class="tab-text-short">Galeri</span>
+    </button>
+    <button class="tab-btn" id="tabFavorites" role="tab" aria-selected="false">
+      <span>❤️</span>
+      <span class="tab-text-full">Beğendiklerim</span>
+      <span class="tab-text-short">Favoriler</span>
+      <span class="badge-num" id="favBadge">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= 1. TİNDER SWİPE ALANI ================= -->
+  <section id="view-swipe">
+    <div class="swipe-stage" id="stage">
+      <!-- Durum Ekranı (Yükleme / Tamamlandı / Hata) -->
+      <div class="state-box show" id="swipeState">
+        <div class="icon" id="stateIcon">🐾</div>
+        <h3 id="stateTitle">Enikler Geliyor...</h3>
+        <p id="stateDesc">Birbirinden sevimli enik fotoğrafları hazırlanıyor.</p>
+        <div class="btn-row" id="stateButtons"></div>
+      </div>
+    </div>
+
+    <!-- Mobil / Masaüstü Kullanım İpucu -->
+    <div class="swipe-hint-bar">
+      <span class="hint-pass">👈 Sola: Geç</span>
+      <span class="hint-dot">·</span>
+      <span class="hint-tap">👆 2x Dokun: Sev ❤️</span>
+      <span class="hint-dot">·</span>
+      <span class="hint-like">Sağa: Beğen 👉</span>
+    </div>
+
+    <!-- Alt Kontrol Butonları (Mobilde Tam Oturan Ergonomik Çubuk) -->
+    <div class="swipe-actions">
+      <button class="action-btn small undo" id="btnUndo" aria-label="Geri Al" title="Son kaydırdığını geri al (Z)">↩</button>
+      <button class="action-btn large nope" id="btnNope" aria-label="Geç" title="Geç (←)">✕</button>
+      <button class="action-btn small dl" id="btnDlCurrent" aria-label="Bu Eniki İndir" title="Bu Eniki İndir (↓)">📥</button>
+      <button class="action-btn large like" id="btnLike" aria-label="Beğen" title="Beğen (→)">❤</button>
+      <button class="action-btn small" id="btnZoomCurrent" aria-label="Büyüt" title="Büyük Fotoğraf">🔍</button>
+    </div>
+  </section>
+
+  <!-- ================= 2. TÜM ENİKLER (GALERİ) ALANI ================= -->
+  <section id="view-gallery">
+    <div class="gallery-toolbar">
+      <div class="gallery-filter-chips">
+        <button class="chip-btn active" data-sort="popular">🔥 En Sevilenler</button>
+        <button class="chip-btn" data-sort="newest">✨ En Yeniler</button>
+        <button class="chip-btn" data-sort="random">🎲 Karışık</button>
+      </div>
+
+      <div class="gallery-meta">
+        <span id="galleryCounter">94 enik</span>
+        <button class="btn-batch-dl" id="btnDownloadAll">
+          <span>📥</span> Tümünü İndir
+        </button>
+      </div>
+    </div>
+
+    <div class="photo-grid" id="galleryGrid"></div>
+  </section>
+
+  <!-- ================= 3. BEĞENDİKLERİM ALANI ================= -->
+  <section id="view-favorites">
+    <div class="gallery-toolbar" id="favToolbar">
+      <div class="gallery-meta">
+        <span>❤️ Beğendiğin <b id="favCountText">0</b> enik var</span>
+      </div>
+      <button class="btn-batch-dl" id="btnDownloadFavs">
+        <span>📥</span> Beğendiklerimi İndir
+      </button>
+    </div>
+
+    <div class="favorites-empty hidden" id="favEmpty">
+      <div class="big-emoji">🥺</div>
+      <h3>Henüz hiç enik beğenmedin</h3>
+      <p>Tinder modunda kartları sağa kaydırarak veya galerideki kalplere tıklayarak favorilerine ekleyebilirsin!</p>
+      <button class="btn-primary" id="btnGoSwipe">Hemen Kaydırmaya Başla 🐾</button>
+    </div>
+
+    <div class="photo-grid" id="favoritesGrid"></div>
+  </section>
+
+</main>
+
+<!-- ================= TAM EKRAN MODAL (LIGHTBOX) ================= -->
+<div class="modal-backdrop" id="photoModal" role="dialog" aria-modal="true">
+  <div class="modal-container">
+    <button class="modal-close-btn" id="modalClose" aria-label="Kapat">✕</button>
+    <button class="modal-nav-btn prev" id="modalPrev" aria-label="Önceki">‹</button>
+    <button class="modal-nav-btn next" id="modalNext" aria-label="Sonraki">›</button>
+
+    <div class="modal-img-wrapper" id="modalImgWrapper">
+      <img id="modalImg" alt="Büyük enik fotoğrafı">
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-info-row">
+        <h3 id="modalTitle">Enik #1</h3>
+        <div class="pill" id="modalRatioPill">%98 Sevimlilik</div>
+      </div>
+
+      <div class="modal-rate-stats">
+        <span id="modalVotes">❤️ 125 Beğeni · ✕ 2 Geç</span>
+        <span id="modalDate">enikler.com</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-dl" id="modalDlBtn">
+          <span>📥</span> Fotoğrafı Cihazına İndir
+        </button>
+        <button class="btn-modal-like" id="modalLikeBtn" aria-label="Beğen" title="Beğen">
+          ❤
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= BİLDİRİM KUTUSU (TOAST) ================= -->
+<div id="toast">🐾 Enik indiriliyor...</div>
+
+<script>
+/* =====================================================================
+   ENİK TİNDERİ & GALERİ UYGULAMASI (MOBİL DOSTU)
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+
+// Haptik Titreşim Desteği (Destekleyen telefonlar için)
+function triggerHaptic(duration = 20) {
+  if (typeof navigator !== 'undefined' && navigator.vibrate) {
+    try { navigator.vibrate(duration); } catch (e) {}
+  }
+}
+
+// Durum Değişkenleri
+let allEnikler = [];       // API'den gelen tüm enikler listesi
+let swipeStack = [];       // Tinder için sırayla kaydırılacak liste
+let historyStack = [];     // Geri alma (Undo) için geçmiş
+let cardsOnStage = [];     // [{el, data, stackIdx}] aktif sahnede duran DOM kartları
+let activeIndex = 0;       // Swipe listesindeki aktif indeks
+let modalCurrentEnik = null;
+let currentSort = 'popular';
+
+// Mobil dinamik eşik: ekran genişliğine göre optimize edilir
+function getSwipeThreshold() {
+  return Math.min(Math.max(window.innerWidth * 0.22, 70), 100);
+}
+
+// LocalStorage Favoriler Yönetimi
+const STORAGE_KEY = 'enikler_liked_ids';
+function getLikedIds() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+function saveLikedId(id) {
+  const list = getLikedIds();
+  if (!list.includes(id)) {
+    list.push(id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    updateLikedCounter();
+  }
+}
+function removeLikedId(id) {
+  let list = getLikedIds();
+  list = list.filter(x => x !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  updateLikedCounter();
+}
+function isEnikLiked(id) {
+  return getLikedIds().includes(id);
+}
+function updateLikedCounter() {
+  const count = getLikedIds().length;
+  $('favBadge').textContent = count;
+  $('favCountText').textContent = count;
+}
+
+// Toast Bildirimi
+let toastTimer = null;
+function showToast(msg) {
+  const t = $('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+  }, 2400);
+}
+
+// Güvenilir Fotoğraf İndirme Fonksiyonu
+async function downloadEnikPhoto(imageUrl, id, customName) {
+  const filename = customName || `enik-${id || 'foto'}.jpg`;
+  showToast('🐾 Enik indiriliyor...');
+  triggerHaptic(15);
+
+  try {
+    const res = await fetch('uploads/' + imageUrl);
+    if (!res.ok) throw new Error('Blob fetch failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    showToast(`🐾 <b>${filename}</b> cihazına indi! 🎉`);
+  } catch (err) {
+    // Sunucu tarafı attachment indirme yedeği
+    const a = document.createElement('a');
+    a.href = `api.php?action=download&id=${id || 0}&file=${encodeURIComponent(imageUrl)}`;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast(`🐾 <b>${filename}</b> indirme başlatıldı! 🐶`);
+  }
+}
+
+// Toplu İndirme Fonksiyonu
+async function downloadBatchPhotos(items, label) {
+  if (!items || !items.length) {
+    showToast('İndirilecek enik bulunamadı 😿');
+    return;
+  }
+  showToast(`🐾 ${items.length} enik indiriliyor...`);
+  let count = 0;
+  for (const item of items) {
+    await downloadEnikPhoto(item.image_url, item.id);
+    count++;
+    if (count < items.length) {
+      await new Promise(r => setTimeout(r, 700)); // Tarayıcı engellemesini önlemek için bekleme
+    }
+  }
+  showToast(`🎉 Toplam ${count} enik cihazına kaydedildi!`);
+}
+
+const FALLBACK_IMAGES = [
+  "03d59ebbef15fc64.jpg","06f84bf5956851c0.jpg","09b6af598c5baf60.jpg","0ba5b6bf1255fe42.jpg","0ca43a150bbee469.jpg",
+  "11b166f2266e7c0f.jpg","155ebc56e6042c99.jpg","1a24b45f843c5eeb.jpg","1c63085f7af62f26.jpg","1d9f15aea9ce6092.jpg",
+  "20289d34759b8d79.jpg","23853e50aecf2ae2.jpg","2419ae0ab2877a52.jpg","26cf04aa242e3120.jpg","26e933eb058e8c35.jpg",
+  "35e1c696eddfae88.jpg","37640214e74eb2e6.jpg","396295c0c3b988bc.jpg","3da9904c2e3f9633.jpg","42624c678ba7e956.jpg",
+  "43853aa440c11758.jpg","48bebc28a31eb060.jpg","499a52ecb902760c.jpg","56964b0f315c24c7.jpg","586cdedf791391b9.jpg",
+  "5baf7b6765338a8c.jpg","6357fd1c1060181a.jpg","649d34b127b01982.jpg","655cab6db6745da2.jpg","66cf7cf396e23be9.jpg",
+  "67e3ad3fe0d4107a.jpg","68f883202dbd43bf.jpg","6ac13e62c16c6.jpg","6ac13e90f2081.jpg","6ac13e9a5cef1.jpg",
+  "6ac13eff5a9a1.jpg","6ac13f0582281.jpg","6ac13f0dc0714.jpg","6ac13f173028e.jpg","6ac13f1f0d4b4.jpg",
+  "6ac13fa0e631a.jpg","6ac13faf8bae6.jpg","6ac13fb5ec9fd.jpg","6ac13fbdd407a.jpg","6ac13fc45df5c.jpg",
+  "6ac13fd0b1d2e.jpg","71bd09f265e259bd.jpg","73bdf30f0de5f3cc.jpg","75e6651ef7d82fed.jpg","7a5a173cc67afe41.jpg",
+  "81b28b5773802ecc.jpg","8317a5832a0b9acd.jpg","837c2e58faa49b35.jpg","88dda79ef9d03f73.jpg","89bd5e0871b7f877.jpg",
+  "8ba286378ea7551b.jpg","8f20227e3d67d0e2.jpg","908fa788cb85dff2.jpg","9a99aca0802a0cec.jpg","9d96a0e0356d670d.jpg",
+  "a12e2019d0e193ea.jpg","a5b9fedc5d01ed0d.jpg","aae6f802f1d12923.jpg","aba24ef8d6e5e1fb.jpg","ac10f40c7f6fffea.jpg",
+  "ac248fd5b3663b0d.jpg","bd7af87fbeb21eab.jpg","c2e94ff8ee61c12e.jpg","c7bb55d3f4386368.jpg","ca5c9ba1697aa7d1.jpg",
+  "ca87874d0c94bbce.jpg","cef1386f8e8c7f71.jpg","cf96a1cdfa48e593.jpg","d0041a866663d743.jpg","da826e6cab33f62c.jpg",
+  "db1ed88cd2bf3516.jpg","de8eac47bb97da3f.jpg","diva.jpg","e25dba9090c3438b.jpg","e34734f39d7e40bd.jpg",
+  "e52a84e605ee9594.jpg","ed5103c220942c70.jpg","f0cdd329de4feb50.jpg","f26c0fe0cf6a895b.jpg","f5fce440b48660d0.jpg",
+  "f64b950118e674cc.jpg","f900e0683dc1b949.jpg","fb3e479c31309136.jpg"
+];
+
+/* ================= VERİ YÜKLEME ================= */
+async function loadAllEnikler() {
+  setSwipeState('loading');
+  try {
+    const res = await fetch(`api.php?action=get_all&sort=${currentSort}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('API yanıt vermedi');
+    const json = await res.json();
+    allEnikler = json.data || json.enikler || [];
+
+    if (!allEnikler.length) {
+      allEnikler = FALLBACK_IMAGES.map((img, idx) => ({
+        id: idx + 1,
+        image_url: img,
+        likes: Math.floor(Math.random() * 50) + 10,
+        dislikes: Math.floor(Math.random() * 3),
+        total: 25,
+        ratio: 95
+      }));
+    }
+
+    $('totalCountBadge').textContent = `${allEnikler.length} Enik`;
+    $('galleryCounter').textContent = `${allEnikler.length} enik`;
+    updateLikedCounter();
+
+    initSwipeStack();
+    renderGallery();
+  } catch (err) {
+    console.warn('API error, using fallback:', err);
+    allEnikler = FALLBACK_IMAGES.map((img, idx) => ({
+      id: idx + 1,
+      image_url: img,
+      likes: Math.floor(Math.random() * 50) + 10,
+      dislikes: Math.floor(Math.random() * 3),
+      total: 25,
+      ratio: 95
+    }));
+    $('totalCountBadge').textContent = `${allEnikler.length} Enik`;
+    $('galleryCounter').textContent = `${allEnikler.length} enik`;
+    updateLikedCounter();
+    initSwipeStack();
+    renderGallery();
+  }
+}
+
+/* ================= 1. TİNDER SWİPE MANTIĞI ================= */
+function initSwipeStack() {
+  swipeStack = [...allEnikler];
+  shuffleArray(swipeStack);
+  activeIndex = 0;
+  historyStack = [];
+  cardsOnStage = [];
+
+  const cards = $('stage').querySelectorAll('.card');
+  cards.forEach(c => c.remove());
+
+  fillSwipeCards();
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function setSwipeState(kind) {
+  const box = $('swipeState');
+  const icon = $('stateIcon');
+  const title = $('stateTitle');
+  const desc = $('stateDesc');
+  const btns = $('stateButtons');
+  btns.innerHTML = '';
+
+  if (kind === 'ready') {
+    box.classList.remove('show');
+    return;
+  }
+  box.classList.add('show');
+
+  if (kind === 'loading') {
+    icon.textContent = '🐾';
+    title.textContent = 'Enikler Geliyor...';
+    desc.textContent = 'Birbirinden sevimli fotoğraflar yükleniyor.';
+  } else if (kind === 'empty') {
+    icon.textContent = '🐣';
+    title.textContent = 'Henüz Enik Yok';
+    desc.textContent = 'Yakında yeni enikler eklenecektir.';
+  } else if (kind === 'done') {
+    icon.textContent = '🏆';
+    title.textContent = 'Bütün Enikleri Gördün!';
+    const likedCount = getLikedIds().length;
+    desc.innerHTML = `Tebrikler! Toplam <b>${allEnikler.length}</b> enikten <b>${likedCount}</b> tanesini beğendin ❤️`;
+
+    const b1 = document.createElement('button');
+    b1.className = 'btn-primary';
+    b1.textContent = '❤️ Beğendiklerimi Gör';
+    b1.onclick = () => switchTab('favorites');
+
+    const b2 = document.createElement('button');
+    b2.className = 'btn-secondary';
+    b2.textContent = '🔄 Baştan Kaydır';
+    b2.onclick = () => { initSwipeStack(); };
+
+    btns.appendChild(b1);
+    btns.appendChild(b2);
+  } else if (kind === 'error') {
+    icon.textContent = '😿';
+    title.textContent = 'Bağlantı Kurulamadı';
+    desc.textContent = 'Sunucudan enikler alınamadı. Lütfen tekrar dene.';
+    const b = document.createElement('button');
+    b.className = 'btn-primary';
+    b.textContent = 'Tekrar Dene';
+    b.onclick = () => loadAllEnikler();
+    btns.appendChild(b);
+  }
+}
+
+function fillSwipeCards() {
+  while (cardsOnStage.length < 3 && activeIndex < swipeStack.length) {
+    const data = swipeStack[activeIndex];
+    createCardDOM(data, activeIndex);
+    activeIndex++;
+  }
+
+  if (cardsOnStage.length === 0) {
+    setSwipeState('done');
+  } else {
+    setSwipeState('ready');
+    updateCardLayers();
+  }
+}
+
+function createCardDOM(data, stackIdx) {
+  const el = document.createElement('div');
+  el.className = 'card';
+
+  const likes = +data.likes || 0;
+  const dislikes = +data.dislikes || 0;
+  const total = likes + dislikes;
+  const ratio = total > 0 ? Math.round((likes / total) * 100) : 100;
+  const isLiked = isEnikLiked(data.id);
+
+  el.innerHTML = `
+    <div class="card-img-wrap">
+      <img src="uploads/${data.image_url}" alt="Sevimli Enik #${data.id}" draggable="false" loading="eager">
+      <div class="card-shade"></div>
+
+      <!-- Hızlı İndir Butonu -->
+      <button class="card-quick-dl" type="button" aria-label="Bu Eniki İndir" title="Fotoğrafı İndir">
+        <span>📥</span> İndir
+      </button>
+
+      <!-- Damgalar -->
+      <div class="stamp like">BEĞENDİM ❤</div>
+      <div class="stamp nope">GEÇ ✕</div>
+
+      <!-- Bilgi Paneli -->
+      <div class="card-info">
+        <div class="card-tags">
+          <span class="tag">#${stackIdx + 1} / ${swipeStack.length}</span>
+          ${ratio >= 90 ? '<span class="tag hot">🔥 %' + ratio + ' Çok Sevildi</span>' : ''}
+          ${isLiked ? '<span class="tag liked">❤️ Favorin</span>' : ''}
+        </div>
+        <div class="card-title-row">
+          <b>Enik #${data.id}</b>
+          <div class="rate-pill">%${ratio} Beğeni</div>
+        </div>
+        <div class="rate-bar">
+          <i style="width:${ratio}%"></i>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // İndir butonuna tıklama olayını karta taşımadan dinle
+  const dlBtn = el.querySelector('.card-quick-dl');
+  dlBtn.addEventListener('pointerdown', e => e.stopPropagation());
+  dlBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    downloadEnikPhoto(data.image_url, data.id);
+  });
+
+  // Sahneye ekle
+  $('stage').insertBefore(el, $('swipeState'));
+  cardsOnStage.push({ el, data, stackIdx });
+
+  bindCardEvents(el, data);
+}
+
+function updateCardLayers() {
+  cardsOnStage.forEach((c, i) => {
+    c.el.classList.toggle('top', i === 0);
+    c.el.classList.toggle('under', i === 1);
+    c.el.classList.toggle('under-2', i >= 2);
+    if (i === 0) {
+      c.el.style.setProperty('--x', '0px');
+      c.el.style.setProperty('--y', '0px');
+      c.el.style.setProperty('--r', '0deg');
+      c.el.style.setProperty('--s', '1');
+    }
+  });
+}
+
+// Kart Etkileşimleri (Dokunmatik, Çift Tıklama, Hızlı Fırlatma/Flick)
+function bindCardEvents(el, data) {
+  let sx = 0, sy = 0, dx = 0, dy = 0, dragging = false;
+  let startTime = 0;
+  let lastTapTime = 0;
+
+  el.addEventListener('pointerdown', e => {
+    if (!cardsOnStage.length || cardsOnStage[0].el !== el) return;
+    dragging = true;
+    startTime = Date.now();
+    sx = e.clientX;
+    sy = e.clientY;
+    dx = 0;
+    dy = 0;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add('drag');
+  });
+
+  el.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    dx = e.clientX - sx;
+    dy = e.clientY - sy;
+
+    el.style.setProperty('--x', dx + 'px');
+    el.style.setProperty('--y', (dy * 0.25) + 'px');
+    el.style.setProperty('--r', (dx * 0.05) + 'deg');
+
+    const threshold = getSwipeThreshold();
+    const progress = Math.min(Math.abs(dx) / threshold, 1);
+    const likeStamp = el.querySelector('.stamp.like');
+    const nopeStamp = el.querySelector('.stamp.nope');
+    if (likeStamp) likeStamp.style.opacity = dx > 0 ? progress : 0;
+    if (nopeStamp) nopeStamp.style.opacity = dx < 0 ? progress : 0;
+  });
+
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('drag');
+
+    const elapsed = Date.now() - startTime;
+    const distance = Math.hypot(dx, dy);
+    const velocity = Math.abs(dx) / (elapsed || 1);
+    const threshold = getSwipeThreshold();
+
+    // 1. Dokunma (Tap) Algılama
+    if (distance < 12 && elapsed < 300) {
+      const now = Date.now();
+      if (now - lastTapTime < 320) {
+        // Çift Dokunma: Kalp patlat ve Beğen!
+        triggerDoubleTapLike(el, data);
+        lastTapTime = 0;
+        return;
+      }
+      lastTapTime = now;
+      // Tek dokunma: Modalı aç
+      setTimeout(() => {
+        if (lastTapTime === now) {
+          openModal(data);
+        }
+      }, 260);
+      return;
+    }
+
+    // 2. Kaydırma veya Hızlı Fırlatma (Flick) Algılama
+    if (Math.abs(dx) > threshold || (velocity > 0.45 && Math.abs(dx) > 35)) {
+      swipeVote(dx > 0 ? 1 : -1);
+    } else {
+      // Merkeze sıfırla
+      el.style.setProperty('--x', '0px');
+      el.style.setProperty('--y', '0px');
+      el.style.setProperty('--r', '0deg');
+      const likeStamp = el.querySelector('.stamp.like');
+      const nopeStamp = el.querySelector('.stamp.nope');
+      if (likeStamp) likeStamp.style.opacity = 0;
+      if (nopeStamp) nopeStamp.style.opacity = 0;
+    }
+    dx = 0; dy = 0;
+  };
+
+  el.addEventListener('pointerup', onEnd);
+  el.addEventListener('pointercancel', onEnd);
+}
+
+// Çift Dokunma Kalp Patlatma
+function triggerDoubleTapLike(cardEl, data) {
+  triggerHaptic(30);
+
+  const heart = document.createElement('div');
+  heart.className = 'double-tap-heart';
+  heart.textContent = '❤️';
+  cardEl.querySelector('.card-img-wrap').appendChild(heart);
+  setTimeout(() => heart.remove(), 700);
+
+  if (!isEnikLiked(data.id)) {
+    saveLikedId(data.id);
+    data.likes = (+data.likes || 0) + 1;
+    showToast('❤️ Çok sevdin! Beğenildi');
+    const fd = new FormData();
+    fd.append('id', data.id);
+    fd.append('type', 'like');
+    fetch('api.php?action=vote', { method: 'POST', body: fd }).catch(() => {});
+  } else {
+    showToast('❤️ Zaten favorilerinde!');
+  }
+}
+
+function swipeVote(dir) {
+  if (!cardsOnStage.length) return;
+  const item = cardsOnStage.shift();
+  const { el, data } = item;
+
+  // Haptik geri bildirim
+  triggerHaptic(dir > 0 ? 25 : 15);
+
+  // Geri alma listesine kaydet
+  historyStack.push(item);
+
+  // Uçurma animasyonu
+  el.classList.remove('drag');
+  el.classList.add('gone');
+  const stamp = el.querySelector(dir > 0 ? '.stamp.like' : '.stamp.nope');
+  if (stamp) stamp.style.opacity = 1;
+  el.style.setProperty('--x', (dir * window.innerWidth * 1.3) + 'px');
+  el.style.setProperty('--r', (dir * 28) + 'deg');
+
+  setTimeout(() => el.remove(), 320);
+
+  // Beğeni ise favorilere ekle
+  if (dir > 0) {
+    saveLikedId(data.id);
+    data.likes = (+data.likes || 0) + 1;
+    showToast('❤️ Enik beğenildi!');
+  } else {
+    data.dislikes = (+data.dislikes || 0) + 1;
+  }
+
+  // Sunucuya oyu bildir
+  const fd = new FormData();
+  fd.append('id', data.id);
+  fd.append('type', dir > 0 ? 'like' : 'dislike');
+  fetch('api.php?action=vote', { method: 'POST', body: fd }).catch(() => {});
+
+  updateCardLayers();
+  fillSwipeCards();
+}
+
+function undoSwipe() {
+  if (!historyStack.length) {
+    showToast('Geri alınacak enik yok 🐾');
+    return;
+  }
+  triggerHaptic(15);
+  const last = historyStack.pop();
+
+  createCardDOM(last.data, last.stackIdx);
+  const newCard = cardsOnStage.pop();
+  cardsOnStage.unshift(newCard);
+
+  $('stage').insertBefore(newCard.el, cardsOnStage[1] ? cardsOnStage[1].el : $('swipeState'));
+  updateCardLayers();
+
+  showToast('↩ Son enik geri getirildi!');
+}
+
+/* ================= 2. GALERİ MANTIĞI ================= */
+function renderGallery() {
+  const grid = $('galleryGrid');
+  grid.innerHTML = '';
+
+  let list = [...allEnikler];
+  if (currentSort === 'popular') {
+    list.sort((a, b) => {
+      const totA = (+a.likes || 0) + (+a.dislikes || 0);
+      const totB = (+b.likes || 0) + (+b.dislikes || 0);
+      const rA = totA ? (+a.likes / totA) : 0;
+      const rB = totB ? (+b.likes / totB) : 0;
+      return (rB - rA) || (b.likes - a.likes) || (b.id - a.id);
+    });
+  } else if (currentSort === 'newest') {
+    list.sort((a, b) => b.id - a.id);
+  } else if (currentSort === 'random') {
+    shuffleArray(list);
+  }
+
+  list.forEach(item => {
+    const card = createGridCardDOM(item);
+    grid.appendChild(card);
+  });
+}
+
+function createGridCardDOM(item) {
+  const el = document.createElement('div');
+  el.className = 'grid-card';
+
+  const likes = +item.likes || 0;
+  const dislikes = +item.dislikes || 0;
+  const total = likes + dislikes;
+  const ratio = total > 0 ? Math.round((likes / total) * 100) : 100;
+  const isLiked = isEnikLiked(item.id);
+
+  el.innerHTML = `
+    <img src="uploads/${item.image_url}" alt="Enik #${item.id}" loading="lazy">
+    <div class="grid-top-badge">%${ratio} ❤️</div>
+    <div class="grid-card-overlay">
+      <div class="grid-card-info">
+        <b>Enik #${item.id}</b>
+        <span>${likes} beğeni</span>
+      </div>
+      <div class="grid-card-actions">
+        <button class="grid-action-btn ${isLiked ? 'liked' : ''}" data-act="like" aria-label="Beğen" title="Beğen">
+          ${isLiked ? '❤️' : '🤍'}
+        </button>
+        <button class="grid-action-btn" data-act="download" aria-label="İndir" title="Fotoğrafı İndir">
+          📥
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Kart tıklamasında modal aç
+  el.addEventListener('click', e => {
+    const actBtn = e.target.closest('.grid-action-btn');
+    if (actBtn) {
+      e.stopPropagation();
+      const act = actBtn.dataset.act;
+      if (act === 'download') {
+        downloadEnikPhoto(item.image_url, item.id);
+      } else if (act === 'like') {
+        toggleLikeEnik(item, actBtn);
+      }
+      return;
+    }
+    openModal(item);
+  });
+
+  return el;
+}
+
+function toggleLikeEnik(item, btn) {
+  const isLiked = isEnikLiked(item.id);
+  triggerHaptic(20);
+
+  if (isLiked) {
+    removeLikedId(item.id);
+    btn.classList.remove('liked');
+    btn.innerHTML = '🤍';
+    showToast('Favorilerden kaldırıldı');
+  } else {
+    saveLikedId(item.id);
+    btn.classList.add('liked');
+    btn.innerHTML = '❤️';
+    showToast('❤️ Favorilere eklendi!');
+    const fd = new FormData();
+    fd.append('id', item.id);
+    fd.append('type', 'like');
+    fetch('api.php?action=vote', { method: 'POST', body: fd }).catch(() => {});
+  }
+  if ($('view-favorites').classList.contains('show')) {
+    renderFavorites();
+  }
+}
+
+/* ================= 3. FAVORİLER MANTIĞI ================= */
+function renderFavorites() {
+  const grid = $('favoritesGrid');
+  const empty = $('favEmpty');
+  const toolbar = $('favToolbar');
+  grid.innerHTML = '';
+
+  const likedIds = getLikedIds();
+  const favItems = allEnikler.filter(x => likedIds.includes(x.id));
+
+  $('favCountText').textContent = favItems.length;
+
+  if (favItems.length === 0) {
+    empty.classList.remove('hidden');
+    toolbar.classList.add('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  toolbar.classList.remove('hidden');
+
+  favItems.forEach(item => {
+    const card = createGridCardDOM(item);
+    grid.appendChild(card);
+  });
+}
+
+/* ================= MODAL / BÜYÜK GÖRÜNTÜLEYİCİ (DOKUNMATİK KAYDIRMA DESTEKLİ) ================= */
+function openModal(item) {
+  modalCurrentEnik = item;
+  $('modalImg').src = 'uploads/' + item.image_url;
+  $('modalTitle').textContent = `Enik #${item.id}`;
+
+  const likes = +item.likes || 0;
+  const dislikes = +item.dislikes || 0;
+  const total = likes + dislikes;
+  const ratio = total > 0 ? Math.round((likes / total) * 100) : 100;
+
+  $('modalRatioPill').textContent = `%${ratio} Sevimlilik`;
+  $('modalVotes').textContent = `❤️ ${likes} Beğeni · ✕ ${dislikes} Geç`;
+
+  const isLiked = isEnikLiked(item.id);
+  const likeBtn = $('modalLikeBtn');
+  likeBtn.classList.toggle('active', isLiked);
+  likeBtn.innerHTML = isLiked ? '❤️' : '🤍';
+
+  $('photoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  $('photoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function navModal(dir) {
+  if (!modalCurrentEnik || !allEnikler.length) return;
+  triggerHaptic(12);
+  const idx = allEnikler.findIndex(x => x.id === modalCurrentEnik.id);
+  if (idx === -1) return;
+  let nextIdx = idx + dir;
+  if (nextIdx < 0) nextIdx = allEnikler.length - 1;
+  if (nextIdx >= allEnikler.length) nextIdx = 0;
+  openModal(allEnikler[nextIdx]);
+}
+
+$('modalClose').onclick = closeModal;
+$('photoModal').onclick = e => {
+  if (e.target === $('photoModal')) closeModal();
+};
+$('modalPrev').onclick = () => navModal(-1);
+$('modalNext').onclick = () => navModal(1);
+
+// Modalda Parmakla Sağa/Sola veya Aşağı Kaydırma (Mobil Lightbox Swipe)
+(function initModalTouch() {
+  let msx = 0, msy = 0, mdx = 0, mdy = 0;
+  const wrap = $('modalImgWrapper');
+
+  wrap.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      msx = e.touches[0].clientX;
+      msy = e.touches[0].clientY;
+      mdx = 0; mdy = 0;
+    }
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) {
+      mdx = e.touches[0].clientX - msx;
+      mdy = e.touches[0].clientY - msy;
+    }
+  }, { passive: true });
+
+  wrap.addEventListener('touchend', () => {
+    if (Math.abs(mdx) > 55 && Math.abs(mdx) > Math.abs(mdy)) {
+      if (mdx > 0) navModal(-1); // Sağa kaydır -> Önceki
+      else navModal(1);          // Sola kaydır -> Sonraki
+    } else if (mdy > 80 && Math.abs(mdy) > Math.abs(mdx) * 1.5) {
+      closeModal();              // Aşağı çek -> Modalı Kapat
+    }
+    mdx = 0; mdy = 0;
+  });
+})();
+
+$('modalDlBtn').onclick = () => {
+  if (modalCurrentEnik) {
+    downloadEnikPhoto(modalCurrentEnik.image_url, modalCurrentEnik.id);
+  }
+};
+
+$('modalLikeBtn').onclick = () => {
+  if (modalCurrentEnik) {
+    toggleLikeEnik(modalCurrentEnik, $('modalLikeBtn'));
+    const isLiked = isEnikLiked(modalCurrentEnik.id);
+    $('modalLikeBtn').innerHTML = isLiked ? '❤️' : '🤍';
+    $('modalLikeBtn').classList.toggle('active', isLiked);
+  }
+};
+
+/* ================= SEKME GEÇİŞLERİ ================= */
+function switchTab(tab) {
+  triggerHaptic(12);
+  const tabs = {
+    swipe: { btn: $('tabSwipe'), view: $('view-swipe') },
+    gallery: { btn: $('tabGallery'), view: $('view-gallery') },
+    favorites: { btn: $('tabFavorites'), view: $('view-favorites') }
+  };
+
+  Object.values(tabs).forEach(t => {
+    t.btn.classList.remove('active');
+    t.btn.setAttribute('aria-selected', 'false');
+    if (t.view === $('view-swipe')) {
+      t.view.style.display = 'none';
+    } else {
+      t.view.classList.remove('show');
+    }
+  });
+
+  const cur = tabs[tab];
+  if (cur) {
+    cur.btn.classList.add('active');
+    cur.btn.setAttribute('aria-selected', 'true');
+    if (cur.view === $('view-swipe')) {
+      cur.view.style.display = 'flex';
+    } else {
+      cur.view.classList.add('show');
+    }
+  }
+
+  if (tab === 'gallery') renderGallery();
+  if (tab === 'favorites') renderFavorites();
+}
+
+$('tabSwipe').onclick = () => switchTab('swipe');
+$('tabGallery').onclick = () => switchTab('gallery');
+$('tabFavorites').onclick = () => switchTab('favorites');
+$('btnGoSwipe').onclick = () => switchTab('swipe');
+
+/* ================= TİNDER KONTROL BUTONLARI ================= */
+$('btnLike').onclick = () => swipeVote(1);
+$('btnNope').onclick = () => swipeVote(-1);
+$('btnUndo').onclick = undoSwipe;
+
+$('btnDlCurrent').onclick = () => {
+  if (cardsOnStage.length) {
+    const top = cardsOnStage[0].data;
+    downloadEnikPhoto(top.image_url, top.id);
+  } else {
+    showToast('İndirilecek enik yok 🐾');
+  }
+};
+
+$('btnZoomCurrent').onclick = () => {
+  if (cardsOnStage.length) {
+    openModal(cardsOnStage[0].data);
+  }
+};
+
+/* ================= GALERİ FİLTRE VE TOPLU İNDİRME ================= */
+document.querySelectorAll('.gallery-filter-chips .chip-btn').forEach(btn => {
+  btn.onclick = () => {
+    triggerHaptic(12);
+    document.querySelectorAll('.gallery-filter-chips .chip-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderGallery();
+  };
+});
+
+$('btnDownloadAll').onclick = () => {
+  downloadBatchPhotos(allEnikler, 'Tüm');
+};
+
+$('btnDownloadFavs').onclick = () => {
+  const likedIds = getLikedIds();
+  const favItems = allEnikler.filter(x => likedIds.includes(x.id));
+  downloadBatchPhotos(favItems, 'Beğenilen');
+};
+
+/* ================= KLAVYE KISAYOLLARI (MASAÜSTÜ İÇİN) ================= */
+window.addEventListener('keydown', e => {
+  // Modal açıkken
+  if ($('photoModal').classList.contains('open')) {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') navModal(-1);
+    if (e.key === 'ArrowRight') navModal(1);
+    if (e.key.toLowerCase() === 'd' && modalCurrentEnik) {
+      downloadEnikPhoto(modalCurrentEnik.image_url, modalCurrentEnik.id);
+    }
+    return;
+  }
+
+  // Swipe görünümündeyken
+  if ($('view-swipe').style.display !== 'none') {
+    if (e.key === 'ArrowRight') swipeVote(1);
+    if (e.key === 'ArrowLeft') swipeVote(-1);
+    if (e.key.toLowerCase() === 'z' || e.key === 'Backspace') undoSwipe();
+    if (e.key === 'ArrowDown' || e.key.toLowerCase() === 'd') {
+      if (cardsOnStage.length) {
+        downloadEnikPhoto(cardsOnStage[0].data.image_url, cardsOnStage[0].data.id);
+      }
+    }
+    if (e.key === ' ' || e.key === 'Enter') {
+      if (cardsOnStage.length) {
+        e.preventDefault();
+        openModal(cardsOnStage[0].data);
+      }
+    }
+  }
+});
+
+// Başlat
+loadAllEnikler();
+</script>
+</body>
+</html>

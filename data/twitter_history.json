@@ -1,0 +1,16 @@
+{
+  "day_count": 1,
+  "seen_ids": [
+    "71bd09f265e259bd.jpg"
+  ],
+  "tweets": [
+    {
+      "day": 1,
+      "enik_id": "71bd09f265e259bd.jpg",
+      "text": "her gün yeni bir enik-1",
+      "tweet_id": "2114051516642259176",
+      "tweet_url": "https://x.com/i/status/2114051516642259176",
+      "date": "2026-10-24 20:48:53"
+    }
+  ]
+}

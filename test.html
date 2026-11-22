@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF4D6">
+<title>Hangi Enik Tipisin? | enikler.com</title>
+<meta name="description" content="X kullanıcı adını yaz, enik radarı seni analiz etsin, enik tipini öğren ve kartını paylaş!">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --accent:#FFB703; --accent-d:#F08C00; --ink:#2B2118; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; min-height:100dvh; font-family:'Nunito',system-ui,sans-serif; color:var(--ink);
+    background:radial-gradient(60vmax 60vmax at 0% 0%,#FFE9A8 0%,transparent 60%),radial-gradient(50vmax 50vmax at 100% 100%,#FFD3C2 0%,transparent 60%),#FFF8E7;
+    display:flex; justify-content:center; padding:20px 16px 40px; }
+  main { width:100%; max-width:480px; }
+  .logo { text-align:center; font-weight:900; font-size:1.5rem; color:var(--accent-d); margin-bottom:14px; text-decoration:none; display:block; }
+  .logo span { color:var(--ink); }
+  .panel { background:#fff; border-radius:28px; padding:26px 22px; box-shadow:0 18px 40px rgba(120,80,20,.14); text-align:center; }
+  .hidden { display:none !important; }
+  h1 { font-size:1.9rem; font-weight:900; margin:8px 0; line-height:1.15; }
+  p.sub { color:#8a7a66; font-weight:700; margin:0 0 18px; }
+  p.fine { color:#b8a688; font-size:.78rem; font-weight:700; margin:14px 0 0; line-height:1.4; }
+  .big { font-size:4.5rem; }
+  .nick { position:relative; margin-bottom:6px; }
+  .nick b { position:absolute; left:16px; top:50%; transform:translateY(-52%); font-weight:900; color:#b8a688; font-size:1.1rem; }
+  input[type=text] { width:100%; padding:14px 16px 14px 38px; font:800 1.05rem 'Nunito',sans-serif; border:2px solid #f0e2c0; border-radius:14px; outline:none; }
+  input[type=text]:focus { border-color:var(--accent); }
+  #err { color:#d62828; font-weight:800; font-size:.85rem; min-height:1.2em; margin:6px 0 0; }
+  .btn { display:block; width:100%; background:var(--accent); color:#fff; border:0; border-radius:16px; padding:15px; font:900 1.05rem 'Nunito',sans-serif; cursor:pointer; text-decoration:none; margin-top:10px; box-shadow:0 6px 0 var(--accent-d); }
+  .btn:active { transform:translateY(3px); box-shadow:0 3px 0 var(--accent-d); }
+  .btn.alt { background:#fff; color:var(--ink); box-shadow:0 0 0 2px #eee inset; }
+  .link { background:none; border:0; color:#b8a688; font:800 .88rem 'Nunito',sans-serif; cursor:pointer; margin-top:14px; text-decoration:underline; }
+  .av { width:96px; height:96px; border-radius:50%; margin:0 auto 10px; background:#FFF1CC; display:grid; place-items:center; font-size:3rem; overflow:hidden; border:4px solid var(--accent); }
+  .av img { width:100%; height:100%; object-fit:cover; }
+  #lname { font-weight:900; font-size:1.2rem; margin-bottom:16px; }
+  .prog { height:10px; background:#f3e8cc; border-radius:99px; overflow:hidden; margin-bottom:18px; }
+  .prog i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),#FF7B54); transition:width .4s linear; }
+  #lmsg { font-weight:800; color:#8a7a66; min-height:2.6em; }
+  .who { display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; font-size:.85rem; color:#8a7a66; margin-bottom:12px; }
+  .who img { width:26px; height:26px; border-radius:50%; object-fit:cover; }
+  .qn { font-weight:800; color:#b8a688; font-size:.9rem; }
+  h2 { font-size:1.45rem; margin:10px 0 22px; line-height:1.3; min-height:5em; display:flex; align-items:center; justify-content:center; }
+  .scale { display:flex; justify-content:space-between; gap:8px; }
+  .scale button { flex:1; aspect-ratio:1; max-width:64px; border-radius:50%; border:3px solid #f3e3b8; background:#FFFBEF; font:900 1.1rem 'Nunito',sans-serif; color:var(--ink); cursor:pointer; transition:.12s; }
+  .scale button:hover { border-color:var(--accent); }
+  .scale button.pick { background:var(--accent); color:#fff; border-color:var(--accent); transform:scale(1.1); }
+  .ends { display:flex; justify-content:space-between; font-size:.8rem; font-weight:800; color:#b8a688; margin-top:10px; }
+  .back { background:none; border:0; color:#b8a688; font:800 .9rem 'Nunito',sans-serif; cursor:pointer; margin-top:16px; }
+  canvas { width:100%; height:auto; border-radius:20px; box-shadow:0 10px 26px rgba(0,0,0,.15); display:block; }
+  .mix { text-align:left; margin-bottom:6px; }
+  .mix h3 { margin:0 0 12px; text-align:center; font-size:1.05rem; }
+  .row { display:grid; grid-template-columns:130px 1fr 42px; gap:8px; align-items:center; font-weight:800; font-size:.88rem; margin-bottom:8px; }
+  .row .b { height:10px; background:#f3e8cc; border-radius:99px; overflow:hidden; }
+  .row .b i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),#FF7B54); border-radius:99px; }
+  .row b { text-align:right; color:#8a7a66; }
+</style>
+</head>
+<body>
+<main>
+  <a class="logo" href="index.html">enikler<span>.com</span></a>
+
+  <!-- 1. Kullanıcı adı -->
+  <section class="panel" id="intro">
+    <div class="big">🔮</div>
+    <h1>Enik Radarı</h1>
+    <p class="sub">X (Twitter) kullanıcı adını yaz, enik radarı profilini analiz etsin ve enik tipini bulsun!</p>
+    <div class="nick"><b>@</b><input type="text" id="nick" maxlength="40" placeholder="kullanıcı adın" autocomplete="off" autocapitalize="none" spellcheck="false"></div>
+    <div id="err"></div>
+    <button class="btn" id="start">Analiz Et</button>
+    <button class="link" id="skip">Kullanıcı adı yazmadan devam et</button>
+    <p class="fine">Eğlence amaçlı bir testtir; sonuç sadece verdiğin cevaplara göre belirlenir. Kartına yalnızca profil fotoğrafın ve kullanıcı adın eklenir. Profil fotoğrafı hız için kısa süre önbelleğe alınabilir, başka hiçbir bilgi kaydedilmez.</p>
+  </section>
+
+  <!-- 2. Yükleniyor -->
+  <section class="panel hidden" id="load">
+    <div class="av" id="lav">🐾</div>
+    <div id="lname"></div>
+    <div class="prog"><i id="lbar"></i></div>
+    <div id="lmsg"></div>
+  </section>
+
+  <!-- 3. Sorular -->
+  <section class="panel hidden" id="quiz">
+    <div class="who hidden" id="who"><img id="whoimg" alt=""><span id="whotxt"></span></div>
+    <div class="prog"><i id="bar" style="transition:width .3s"></i></div>
+    <div class="qn" id="qn"></div>
+    <h2 id="qtext"></h2>
+    <div class="scale" id="scale"></div>
+    <div class="ends"><span>Hiç katılmıyorum</span><span>Tamamen katılıyorum</span></div>
+    <button class="back" id="back">← Geri</button>
+  </section>
+
+  <!-- 4. Sonuç -->
+  <section class="hidden" id="result">
+    <canvas id="cv"></canvas>
+    <div class="panel" style="margin-top:16px">
+      <div class="mix"><h3>Enik karışımın</h3><div id="mix"></div></div>
+      <button class="btn" id="download">📥 Kartı İndir</button>
+      <button class="btn alt" id="share">📤 Paylaş</button>
+      <button class="btn alt" id="again">🔄 Tekrar Dene</button>
+      <a class="btn alt" href="index.html">🐾 Eniklere Göz At</a>
+      <p class="fine">Eğlence amaçlıdır. Sonuç, verdiğin cevaplara göre belirlenir.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ================= AYARLAR ================= */
+// photo: uploads/ klasöründeki enik fotoğrafı. Yüklenemezse emoji (e) gösterilir.
+const TYPES = [
+  { short:'Uykucu', e:'😴', title:'Uykucu Enik', c1:'#8E9EFF', c2:'#C8B6FF', photo:'uykucu.png',
+    desc:'Yatak senin kalen, battaniye zırhın. Beynin çoğu zaman uyku modunda ve bundan hiç şikayetçi değilsin. Acele işe şeytan karışır diye yaşıyorsun!',
+    traits:['Sakin','Rahat','Şekerlemeci'] },
+  { short:'Mahcup', e:'🙈', title:'Mahcup Enik', c1:'#FF8FA3', c2:'#FFC2A1', photo:'mahcup.png',
+    desc:'İnecek var demeye çekinip fazladan durak gidenlerdensin. Kendini fazla yük sanırsın ama herkes seni yanında görmekten mutlu. Utangaç ve tatlısın!',
+    traits:['Utangaç','Nazik','Tatlı'] },
+  { short:'Bahtı Kara', e:'🌧️', title:'Bahtı Kara Enik', c1:'#5C6B8A', c2:'#2F3B5C', photo:'bahtikara.png',
+    desc:'Şansın seninle küs. Çölde su arasan tuz gölü çıkıyor ama sen her seferinde ayağa kalkıp yoluna devam ediyorsun. Enik yine de çok güzel!',
+    traits:['Dirençli','Komik','Sabırlı'] },
+  { short:'Beyni Bomboş', e:'🥴', title:'Beyni Bomboş Enik', c1:'#9BE15D', c2:'#00C9A7', photo:'beynibombos.png',
+    desc:'Şu an kafanın içinde sadece rüzgar esiyor. Telefonu elinde tutup neye bakacağını unutuyorsun ve bu seni çok özel yapıyor. Hayat soru sorsa cevabın hazır: Hı?',
+    traits:['Dalgın','Özgür','Tahmin edilemez'] },
+  { short:'Üzgün', e:'😢', title:'Üzgün Enik', c1:'#6BA8D6', c2:'#8E7CC3', photo:'uzgun.png',
+    desc:'Gece üçte eski dertler seni buluyor, en mutlu anında bile içinde bir şüphe var. Ama hüznün bile sevimli. Sana sarılmak isteyen çok enik var!',
+    traits:['Duygusal','Derin','Sevgi dolu'] }
+];
+
+// type: TYPES dizisindeki sıra (0 Uykucu, 1 Mahcup, 2 Bahtı Kara, 3 Beyni Bomboş, 4 Üzgün)
+const QUESTIONS = [
+  { type:3, text:'Elime telefonu alıp neye bakacağımı saniyesinde unuturum' },
+  { type:1, text:'Otobüste "inecek var" demeye çekindiğim için fazladan iki durak giderim' },
+  { type:2, text:'Hangi işe heveslenip el atsam elimde kalır, şansım sıfır' },
+  { type:0, text:'Ayaktayken, otururken, gözüm açıkken bile beynim uyku modundadır' },
+  { type:4, text:'Gece durduk yere eski dertleri hatırlayıp kendi kendimi darlarım' },
+  { type:3, text:'Biri bana bir şey anlatırken kafamın içinde sadece zil çalan maymunlar olur' },
+  { type:1, text:'Mağazada çalışan "yardımcı olayım" diye yanıma gelince korkudan mağazadan çıkarım' },
+  { type:2, text:'Çölde su arasam karşıma tuz gölü çıkar' },
+  { type:0, text:'Gün içindeki tek yaşama sevincim akşam yatağıma kavuşmaktır' },
+  { type:4, text:'En mutlu anımda bile "kesin bir terslik çıkacak" tribine girerim' },
+  { type:3, text:'"Şifremi unuttum" butonu benim en çok kullandığım buton' },
+  { type:0, text:'Yatağa beş dakika uzanayım derim, gözümü açınca saat gece olmuştur' }
+];
+
+const SCAN_MSGS = [
+  'Profil fotoğrafı koklanıyor 🐽',
+  'Tweetlerin ruh hali ölçülüyor 📊',
+  'Gece üç paylaşımları taranıyor 🌙',
+  'Enik radarı çalışıyor 📡',
+  'Sonuçlar paketleniyor 🎁'
+];
+const CALC_MSGS = ['Cevapların radara yükleniyor 📡', 'Enik tipin belirleniyor 🐾', 'Kartın hazırlanıyor ✨'];
+
+/* ================= YARDIMCILAR ================= */
+const $ = id => document.getElementById(id);
+const SECTIONS = ['intro', 'load', 'quiz', 'result'];
+function show(id) { SECTIONS.forEach(s => $(s).classList.toggle('hidden', s !== id)); scrollTo(0, 0); }
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+function cleanHandle(v) {
+  v = (v || '').trim().replace(/^(https?:\/\/)?(www\.|mobile\.)?(x|twitter)\.com\//i, '').split(/[\/?#]/)[0].replace(/^@/, '');
+  return /^[A-Za-z0-9_]{1,15}$/.test(v) ? v : '';
+}
+
+// Resim yükler; takılırsa 8 sn sonra vazgeçer (null döner)
+function loadImg(src, cors) {
+  return new Promise(res => {
+    const i = new Image();
+    if (cors) i.crossOrigin = 'anonymous';
+    const t = setTimeout(() => res(null), 8000);
+    i.onload = () => { clearTimeout(t); res(i.naturalWidth ? i : null); };
+    i.onerror = () => { clearTimeout(t); res(null); };
+    i.src = src;
+  });
+}
+
+// Profil fotoğrafı: önce kendi sunucumuz (avatar.php), olmazsa ücretsiz yedek servisler
+async function loadAvatar(h) {
+  const e = encodeURIComponent(h);
+  return (await loadImg('avatar.php?u=' + e, false))
+      || (await loadImg('https://unavatar.io/twitter/' + e + '?fallback=false', true))
+      || (await loadImg('https://unavatar.io/x/' + e + '?fallback=false', true));
+}
+
+// Enik fotoğrafları (sayfa açılınca arka planda yüklenir)
+const typePhotos = {};
+TYPES.forEach(t => { typePhotos[t.short] = t.photo ? loadImg('uploads/' + t.photo, false) : Promise.resolve(null); });
+
+let loadTok = 0;
+async function runLoading(msgs, total) {
+  const tok = loadTok, step = total / msgs.length;
+  $('lbar').style.width = '0%';
+  for (let i = 0; i < msgs.length; i++) {
+    if (tok !== loadTok) return;
+    $('lmsg').textContent = msgs[i];
+    await wait(30);
+    $('lbar').style.width = ((i + 1) / msgs.length * 100) + '%';
+    await wait(step);
+  }
+}
+
+/* ================= AKIŞ ================= */
+let handle = '', ppImg = null, idx = 0, answers = [], lastResult = null;
+
+$('start').onclick = () => {
+  const raw = $('nick').value.trim();
+  const h = cleanHandle(raw);
+  if (!raw || !h) { $('err').textContent = 'Geçerli bir kullanıcı adı yaz (harf, rakam ve _ kullanılabilir).'; return; }
+  $('err').textContent = ''; begin(h);
+};
+$('skip').onclick = () => begin('');
+$('nick').addEventListener('keydown', e => { if (e.key === 'Enter') $('start').click(); });
+
+async function begin(h) {
+  handle = h; ppImg = null; idx = 0; answers = [];
+  show('load');
+  $('lname').textContent = h ? '@' + h : 'Misafir enik';
+  $('lav').textContent = '🐾';
+
+  const tok = ++loadTok;
+  const ppP = h ? loadAvatar(h) : Promise.resolve(null);
+  const anim = runLoading(SCAN_MSGS, 4500);
+  const img = await ppP;
+  if (h && !img) {                       // fotoğraf bulunamadı: hesap yok ya da yazım hatası
+    loadTok++;
+    show('intro');
+    $('err').textContent = '@' + h + ' bulunamadı. Kullanıcı adını kontrol edip tekrar dene.';
+    return;
+  }
+  ppImg = img;
+  if (img) { $('lav').innerHTML = ''; const im = document.createElement('img'); im.src = img.src; im.alt = ''; $('lav').appendChild(im); }
+  await anim;
+  if (tok !== loadTok) return;
+  $('lmsg').textContent = 'Analiz tamam ✅ Sonucu netleştirmek için ' + QUESTIONS.length + ' ekstra soru var!';
+  await wait(1500);
+
+  if (handle) {
+    $('who').classList.remove('hidden'); $('whotxt').textContent = '@' + handle;
+    $('whoimg').classList.toggle('hidden', !ppImg); if (ppImg) $('whoimg').src = ppImg.src;
+  } else $('who').classList.add('hidden');
+  show('quiz'); renderQ();
+}
+
+function renderQ() {
+  $('bar').style.width = (idx / QUESTIONS.length * 100) + '%';
+  $('qn').textContent = 'Ekstra soru ' + (idx + 1) + ' / ' + QUESTIONS.length;
+  $('qtext').textContent = QUESTIONS[idx].text;
+  $('back').style.visibility = idx ? 'visible' : 'hidden';
+  const box = $('scale'); box.innerHTML = '';
+  for (let v = 0; v < 5; v++) {
+    const b = document.createElement('button');
+    b.textContent = v + 1;
+    if (answers[idx] === v) b.classList.add('pick');
+    b.onclick = () => {
+      answers[idx] = v; b.classList.add('pick');
+      setTimeout(() => { idx++; idx < QUESTIONS.length ? renderQ() : finish(); }, 160);
+    };
+    box.appendChild(b);
+  }
+}
+$('back').onclick = () => { if (idx > 0) { idx--; renderQ(); } };
+
+async function finish() {
+  $('bar').style.width = '100%';
+  show('load');
+  $('lname').textContent = handle ? '@' + handle : 'Misafir enik';
+  runLoading(CALC_MSGS, 3000);          // ekranda dönsün
+  await wait(3300);
+
+  // Her tipte soru sayısı farklı olabilir, o yüzden yüzdeyle karşılaştırılır
+  const sc = TYPES.map(() => 0), cnt = TYPES.map(() => 0);
+  QUESTIONS.forEach((q, i) => { sc[q.type] += answers[i] || 0; cnt[q.type]++; });
+  const pct = sc.map((s, i) => cnt[i] ? s / (cnt[i] * 4) : 0);
+  const order = pct.map((p, i) => [p, i, Math.random()]).sort((a, b) => b[0] - a[0] || b[2] - a[2]);
+  lastResult = TYPES[order[0][1]];
+
+  const mix = $('mix'); mix.innerHTML = '';
+  order.forEach(([p, i]) => {
+    const v = Math.round(p * 100), row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<span></span><div class="b"><i></i></div><b></b>';
+    row.children[0].textContent = TYPES[i].e + ' ' + TYPES[i].short;
+    row.querySelector('i').style.width = v + '%';
+    row.children[2].textContent = '%' + v;
+    mix.appendChild(row);
+  });
+
+  show('result');
+  drawCard(lastResult);
+}
+
+/* ================= SONUÇ KARTI (canvas) ================= */
+const cv = $('cv');
+const SITE_LINK = location.host;          // sadece enikler.com yazsın
+
+function rr(x, px, py, w, h, r) {
+  x.beginPath(); x.moveTo(px + r, py);
+  x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r);
+  x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath();
+}
+function wrap(x, text, maxW) {
+  const words = text.split(' '), lines = []; let line = '';
+  words.forEach(w => {
+    const t = line ? line + ' ' + w : w;
+    if (x.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+
+function coverCircle(x, img, cx, cy, r) {
+  x.save(); x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.closePath(); x.clip();
+  const s = Math.max(r * 2 / img.width, r * 2 / img.height);
+  x.drawImage(img, cx - img.width * s / 2, cy - img.height * s / 2, img.width * s, img.height * s);
+  x.restore();
+}
+
+async function drawCard(t) {
+  await Promise.all([document.fonts.load('900 60px Nunito'), document.fonts.load('700 40px Nunito'), document.fonts.load('800 40px Nunito')]);
+  const typeImg = await typePhotos[t.short];
+  const W = 1080, H = 1350; cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+
+  const g = x.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, t.c1); g.addColorStop(1, t.c2);
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(255,255,255,.96)'; rr(x, 60, 60, W - 120, H - 120, 56); x.fill();
+
+  x.fillStyle = '#b8a688'; x.font = '800 34px Nunito'; x.fillText('ENİK RADARI SONUCU', W / 2, 150);
+
+  // Rozet: kullanıcı pp'si ortada, enik fotoğrafı sağ altta. pp yoksa enik fotoğrafı ortada.
+  const cx = W / 2, cy = 410, R = 190;
+
+  const ring = (px, py, r) => { x.lineWidth = 12; x.strokeStyle = t.c1; x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.stroke(); };
+  const putEmoji = (px, py, size) => { x.font = size + 'px ' + EMOJI_FONT; x.fillStyle = '#000'; x.textBaseline = 'middle'; x.fillText(t.e, px, py + size * 0.04); x.textBaseline = 'alphabetic'; };
+  if (ppImg) {
+    // yan yana: solda kullanıcının pp'si, sağda enik tipi
+    const r = 150, lx = cx - 170, rx = cx + 170;
+    x.fillStyle = t.c1 + '33';
+    x.beginPath(); x.arc(lx, cy, r, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.arc(rx, cy, r, 0, Math.PI * 2); x.fill();
+    coverCircle(x, ppImg, lx, cy, r); ring(lx, cy, r);
+    if (typeImg) coverCircle(x, typeImg, rx, cy, r); else putEmoji(rx, cy, 150);
+    ring(rx, cy, r);
+  } else {
+    x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.fillStyle = t.c1 + '33'; x.fill();
+    if (typeImg) coverCircle(x, typeImg, cx, cy, R); else putEmoji(cx, cy, 230);
+    ring(cx, cy, R);
+  }
+
+  // Başlıklar
+  x.fillStyle = '#8a7a66'; x.font = '800 44px Nunito';
+  x.fillText(handle ? '@' + handle + ', sen bir' : 'Sen bir', W / 2, 705);
+  x.fillStyle = '#2B2118'; let fs = 92; x.font = '900 ' + fs + 'px Nunito';
+  while (x.measureText(t.title).width > 880 && fs > 50) { fs -= 4; x.font = '900 ' + fs + 'px Nunito'; }
+  x.fillText(t.title, W / 2, 805);
+
+  x.fillStyle = '#5a4a3a'; x.font = '700 38px Nunito';
+  wrap(x, t.desc, 800).slice(0, 4).forEach((l, i) => x.fillText(l, W / 2, 890 + i * 54));
+
+  x.font = '800 32px Nunito';
+  const pad = 28, gap = 16, widths = t.traits.map(s => x.measureText(s).width + pad * 2);
+  let px = (W - (widths.reduce((a, b) => a + b, 0) + gap * (t.traits.length - 1))) / 2;
+  t.traits.forEach((s, i) => {
+    x.fillStyle = t.c1 + '2E'; rr(x, px, 1112, widths[i], 64, 32); x.fill();
+    x.fillStyle = '#2B2118'; x.fillText(s, px + widths[i] / 2, 1155);
+    px += widths[i] + gap;
+  });
+
+  x.fillStyle = '#b8a688'; x.font = '700 30px Nunito';
+  x.fillText('Sen hangi enik tipisin? Radara gir:', W / 2, 1225);
+  x.fillStyle = '#F08C00'; x.font = '900 42px Nunito';
+  x.fillText(SITE_LINK, W / 2, 1275);
+}
+
+const fileName = () => 'enik-' + (lastResult ? lastResult.short.toLowerCase().replace(/[^a-zçğıöşü]+/g, '-') : 'kart') + '.png';
+const getBlob = () => new Promise(res => cv.toBlob(res, 'image/png'));
+
+$('download').onclick = async () => {
+  const blob = await getBlob(), a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = fileName(); a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+
+$('share').onclick = async () => {
+  const blob = await getBlob();
+  const file = new File([blob], fileName(), { type: 'image/png' });
+  const text = (handle ? '@' + handle + ' ' : 'Ben ') + lastResult.title + ' çıktım! Sen hangi enik tipisin? ' + location.origin;
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text });
+    else if (navigator.share) await navigator.share({ text, url: location.origin });
+    else $('download').click();
+  } catch (e) { /* kullanıcı vazgeçti */ }
+};
+
+$('again').onclick = () => { $('nick').value = ''; show('intro'); };
+</script>
+</body>
+</html>

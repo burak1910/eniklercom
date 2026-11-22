@@ -1,0 +1,62 @@
+[
+    {
+        "id": "rastgele",
+        "words": [
+            "rastgele"
+        ],
+        "reply": "",
+        "mode": "all",
+        "photos": []
+    },
+    {
+        "id": "uzgun",
+        "words": [
+            "üzgün"
+        ],
+        "reply": "",
+        "mode": "selected",
+        "photos": [
+            "6bf76d31c87d8cab.jpg",
+            "ac248fd5b3663b0d.jpg",
+            "ac10f40c7f6fffea.jpg",
+            "655cab6db6745da2.jpg",
+            "d0041a866663d743.jpg",
+            "cef1386f8e8c7f71.jpg",
+            "ca87874d0c94bbce.jpg",
+            "da826e6cab33f62c.jpg",
+            "6ac13e90f2081.jpg"
+        ]
+    },
+    {
+        "id": "a89f9813",
+        "words": [
+            "uykucu"
+        ],
+        "reply": "",
+        "mode": "selected",
+        "photos": [
+            "bbf28e04dd3b77ea.jpg",
+            "9a99aca0802a0cec.jpg",
+            "c7bb55d3f4386368.jpg",
+            "499a52ecb902760c.jpg",
+            "1d9f15aea9ce6092.jpg",
+            "37640214e74eb2e6.jpg"
+        ]
+    },
+    {
+        "id": "f923b284",
+        "words": [
+            "mutlu"
+        ],
+        "reply": "",
+        "mode": "selected",
+        "photos": [
+            "72751babec371f1a.jpg",
+            "b8aef8774d1514f8.jpg",
+            "155ebc56e6042c99.jpg",
+            "bd7af87fbeb21eab.jpg",
+            "ca5c9ba1697aa7d1.jpg",
+            "42624c678ba7e956.jpg"
+        ]
+    }
+]
